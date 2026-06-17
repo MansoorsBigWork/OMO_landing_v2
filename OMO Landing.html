@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMO — Get an OMOship instead</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<script async src="https://tally.so/widgets/embed.js"></script>
+<style>
+  :root{
+    --omo-orange:#F26419;
+    --carbon:#1A1A1A;
+    --white:#FFFFFF;
+    --warm:#FFFFFF;        /* white canvas */
+    --warm-deep:#EEE9E1;
+    --grey:#E5E5E5;
+    --sans:'Space Grotesk',sans-serif;
+    --hand:'Caveat',cursive;
+    --safe:clamp(16px,4.5vw,80px);
+    /* Consistent soft shadows applied to every non-text element */
+    --shadow-xs:0 1px 2px rgba(23,21,19,0.04), 0 2px 6px -2px rgba(23,21,19,0.06);
+    --shadow-sm:0 1px 2px rgba(23,21,19,0.05), 0 4px 12px -4px rgba(23,21,19,0.08);
+    --shadow-md:0 1px 2px rgba(23,21,19,0.04), 0 10px 24px -10px rgba(23,21,19,0.12);
+    --shadow-lg:0 2px 4px rgba(23,21,19,0.04), 0 18px 40px -16px rgba(23,21,19,0.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--sans);
+    color:var(--carbon);
+    background:var(--warm);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--omo-orange);color:#fff;}
+
+  .page{min-height:100vh;display:flex;flex-direction:column;}
+  .page > main, .page > section{flex:0 0 auto;}
+
+  /* ---------- Header: flat full-width white bar, logo left + text nav right ---------- */
+  /* ---------- Header: flat full-width bar, slightly translucent white ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;
+    z-index:50;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding:18px var(--safe);
+    background:rgba(255,255,255,0.78);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    border-bottom:1px solid rgba(23,21,19,0.07);
+    box-shadow:none;
+    transition:box-shadow .25s ease, background .25s ease;
+  }
+  header.is-scrolled{
+    background:rgba(255,255,255,0.85);
+    box-shadow:0 1px 0 rgba(23,21,19,0.06), 0 10px 28px -16px rgba(20,16,12,0.18);
+  }
+  .logo{height:26px;width:auto;display:block;position:relative;z-index:1;}
+
+  /* nav row */
+  .nav{
+    display:flex;align-items:center;gap:clamp(28px,3.6vw,68px);
+    position:relative;z-index:1;
+  }
+  .nav-link{
+    font-family:var(--sans);font-weight:600;
+    font-size:16px;letter-spacing:-0.01em;
+    background:transparent;border:none;cursor:pointer;padding:0;
+    color:var(--carbon);text-decoration:none;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:5px;
+    transition:color .18s ease;
+  }
+  .nav-link:hover{color:var(--omo-orange);}
+  .nav-link .caret{font-size:.7em;opacity:.6;transition:transform .18s ease;}
+  /* the audience toggle items keep driving the page mode */
+  .nav-link.is-active{color:var(--omo-orange);}
+  /* accent action item — orange pill */
+  .nav-link.nav-cta{
+    background:var(--omo-orange);color:#fff;font-weight:700;
+    padding:10px 22px;border-radius:999px;
+    box-shadow:0 1px 2px rgba(23,21,19,0.08), 0 8px 18px -10px rgba(242,100,25,0.55);
+    transition:background .18s ease, transform .14s ease, box-shadow .18s ease;
+  }
+  .nav-link.nav-cta:hover{background:#d9531a;color:#fff;transform:translateY(-1px);box-shadow:0 2px 4px rgba(23,21,19,0.08), 0 12px 24px -10px rgba(242,100,25,0.6);}
+
+  /* ---------- Hero grid ---------- */
+  .hero{
+    flex:1 1 auto;
+    display:grid;
+    grid-template-columns:1.05fr .95fr;
+    min-height:100vh;
+    position:relative;
+    padding-top:82px;
+    z-index:1;
+    isolation:isolate;
+  }
+
+  /* ----- Left ----- */
+  .left{
+    padding:clamp(20px,3vh,48px) var(--safe) clamp(28px,5vh,72px);
+    display:flex;flex-direction:column;justify-content:center;
+    gap:clamp(16px,2.4vh,32px);
+  }
+  h1{
+    font-weight:700;
+    font-size:clamp(36px,min(7.4vw,11vh),124px);
+    line-height:.88;
+    letter-spacing:-0.05em;
+    text-wrap:balance;
+    -webkit-text-stroke:1.4px var(--carbon);
+  }
+  .subhead{
+    font-weight:600;
+    font-size:clamp(18px,min(2.8vw,4vh),46px);
+    line-height:1.02;
+    letter-spacing:-0.025em;
+    color:var(--carbon);
+  }
+  .subhead .omoship{position:relative;white-space:nowrap;color:var(--omo-orange);}
+  .subhead .sub-arrow{color:var(--omo-orange);font-weight:700;padding:0 .06em;}
+  .subhead .omoship::after{
+    content:"";position:absolute;left:0;right:0;bottom:.04em;height:.12em;
+    background:var(--omo-orange);opacity:.28;
+  }
+
+  .cta-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:2px;}
+  .cta{
+    position:relative;isolation:isolate;
+    display:inline-flex;align-items:center;gap:14px;
+    background:var(--omo-orange);
+    color:#fff;border:none;cursor:pointer;
+    font-family:var(--sans);font-weight:700;
+    font-size:clamp(15px,1.15vw,19px);letter-spacing:.04em;text-transform:uppercase;
+    padding:clamp(14px,2vh,20px) clamp(24px,3vw,36px);white-space:nowrap;
+    transition:transform .14s ease, background .18s ease;
+  }
+  /* soft radial glow behind the button (on the page, not on the button) */
+  .cta::before{
+    content:"";position:absolute;inset:-26px -32px;z-index:-1;
+    background:radial-gradient(ellipse at center,
+      rgba(242,100,25,0.30) 0%,
+      rgba(242,100,25,0.15) 32%,
+      rgba(242,100,25,0.05) 60%,
+      rgba(242,100,25,0) 78%);
+    pointer-events:none;opacity:.9;
+    transition:opacity .25s ease, inset .25s ease;
+  }
+  .cta:hover{background:#d9531a;transform:translateY(-2px);}
+  .cta:hover::before{opacity:1;inset:-32px -40px;}
+  .cta:active{transform:translateY(0);}
+  .cta .label-txt{white-space:nowrap;}
+  .cta .arrow{font-size:1.2em;line-height:1;transition:transform .15s ease;}
+  .cta:hover .arrow{transform:translateX(5px);}
+  .note{font-size:clamp(14px,1.05vw,17px);font-weight:600;line-height:1.45;letter-spacing:.005em;color:var(--carbon);opacity:.62;max-width:30em;text-wrap:pretty;}
+  .note .omoship{color:var(--omo-orange);font-weight:700;}
+
+  .trust{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    font-size:clamp(14px,1.05vw,17px);font-weight:600;letter-spacing:.01em;
+    color:var(--carbon);
+  }
+  .trust .item{display:inline-flex;align-items:center;gap:10px;}
+  .trust .item::before{content:"";width:8px;height:8px;background:var(--carbon);flex:0 0 auto;}
+  .trust .item:first-child::before{background:var(--omo-orange);}
+
+  /* ----- Right (orange flood + photo) ----- */
+  .right{
+    --shift:clamp(16px,2.6vw,42px);
+    position:relative;
+    background:
+      radial-gradient(ellipse 75% 70% at 58% 42%,
+        #FF7A35 0%,
+        #F26419 55%,
+        #D9531A 100%);
+    border:none;
+    border-top-left-radius:clamp(36px,4vw,64px);
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    padding:clamp(4px,0.8vw,12px) clamp(24px,3vw,48px) clamp(12px,1.8vh,24px);
+  }
+  /* extend the orange down behind the indigo sheet's rounded top corner so no white shows */
+  .right::after{
+    content:"";position:absolute;left:0;right:0;top:100%;
+    height:clamp(40px,5vw,72px);
+    background:#D9531A;
+    z-index:-1;
+  }
+  .right .watermark{
+    position:absolute;
+    font-weight:700;font-size:46vh;line-height:1;
+    color:#fff;opacity:.10;
+    top:-10%;right:-8%;
+    pointer-events:none;user-select:none;letter-spacing:-0.05em;
+  }
+
+  /* hand-drawn scribble, parked in the empty orange to the left of Simon */
+  .scribble{
+    position:absolute;z-index:4;
+    left:clamp(-14px,0vw,24px);
+    top:clamp(96px,15vh,200px);
+    width:clamp(140px,15vw,220px);
+    text-align:left;
+    pointer-events:none;
+    transform:translateX(var(--shift));
+  }
+  .scribble .txt{
+    font-family:var(--hand);font-weight:700;color:#fff;
+    font-size:clamp(24px,min(2.8vw,3.6vh),42px);line-height:.9;
+    transform:rotate(-11deg);
+  }
+  .scribble .txt .hl{color:var(--carbon);}
+  .scribble .arrow{
+    position:absolute;left:86%;top:30%;
+    width:clamp(66px,7vw,104px);height:auto;
+    margin-left:clamp(-14px,-0.8vw,-4px);
+    overflow:visible;pointer-events:none;
+  }
+  .scribble .arrow path{
+    fill:none;stroke:var(--omo-orange);
+    stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  .photo-wrap{
+    flex:1 1 auto;min-height:0;width:100%;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;z-index:2;
+    transform:translateX(var(--shift));
+    margin-top:clamp(4px,0.8vh,16px);
+  }
+  .photo{
+    max-height:clamp(320px,68vh,640px);max-width:96%;width:auto;height:auto;display:block;
+    filter:grayscale(.82) contrast(1.04) brightness(.96)
+      drop-shadow(1px 0 0 var(--carbon)) drop-shadow(-1px 0 0 var(--carbon))
+      drop-shadow(0 1px 0 var(--carbon)) drop-shadow(0 -1px 0 var(--carbon))
+      drop-shadow(1px 0 0 var(--carbon));
+  }
+
+  .caption{
+    position:relative;z-index:3;flex:0 0 auto;text-align:center;
+    padding:0;
+    margin-top:-6px;
+    transform:translateX(var(--shift));
+  }
+  .caption .label{
+    display:block;font-size:clamp(14px,1.8vh,17px);font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:#fff;opacity:.85;
+  }
+  .caption .name{
+    display:block;margin-top:6px;
+    font-family:var(--sans);
+    font-weight:700;font-size:clamp(28px,min(3.2vw,4.2vh),48px);
+    line-height:1;letter-spacing:-0.02em;color:#fff;
+  }
+
+  /* ---------- Scroll cue at end of hero ---------- */
+  .scroll-cue{
+    position:absolute;left:var(--safe);bottom:14px;
+    z-index:5;display:flex;align-items:center;gap:14px;
+    color:var(--carbon);opacity:.72;pointer-events:none;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  }
+  .scroll-cue .line{width:34px;height:1px;background:var(--carbon);opacity:.55;}
+  @keyframes cueDrop{0%{transform:translateY(-3px);opacity:.2}50%{opacity:1}100%{transform:translateY(3px);opacity:.2}}
+  .scroll-cue .dot{width:5px;height:5px;background:var(--carbon);border-radius:50%;animation:cueDrop 1.8s ease-in-out infinite;}
+
+  /* ---------- Section 2: How OMOships work ---------- */
+  .how{
+    scroll-margin-top:90px;
+    position:relative;
+    background:#544DC2;
+    border-top:none;
+    border-top-left-radius:clamp(36px,4vw,64px);
+    border-top-right-radius:clamp(36px,4vw,64px);
+    margin-top:0;
+    padding:clamp(55px,5.5vw,85px) var(--safe) calc(clamp(48px,5vw,80px) + 96px);
+    transform:translateY(0);
+    will-change:transform;
+    box-shadow:
+      0 -1px 0 rgba(23,21,19,0.03),
+      0 -10px 24px -16px rgba(23,21,19,0.10),
+      0 -20px 50px -32px rgba(23,21,19,0.12);
+    z-index:2;
+  }
+
+  /* intro block */
+  .how-intro{max-width:48rem;margin-bottom:clamp(24px,3vw,44px);}
+  .product-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono','Space Grotesk',monospace;
+    font-size:13px;font-weight:600;letter-spacing:.04em;
+    color:#C7C4F5;margin-bottom:22px;
+    white-space:nowrap;
+  }
+  .how h2.how-title{
+    font-weight:700;letter-spacing:-0.045em;line-height:.95;
+    font-size:clamp(28px,6vw,96px);margin:0 0 22px;
+    color:var(--omo-orange);
+  }
+  .how h2.how-title s{
+    color:rgba(255,255,255,0.55);
+    text-decoration-thickness:0.06em;
+  }
+  .how-sub{
+    font-size:clamp(16px,1.25vw,20px);line-height:1.55;font-weight:500;
+    color:rgba(255,255,255,0.82);max-width:42ch;text-wrap:pretty;
+    margin:0;
+  }
+
+  /* two-column grid */
+  .how-grid{
+    display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(20px,2.4vw,36px);align-items:start;
+  }
+
+  /* LEFT — product preview card */
+  .product-card{
+    position:relative;
+    background:#fff;border-radius:24px;
+    padding:clamp(22px,2vw,30px);
+    box-shadow:var(--shadow-lg);
+    display:flex;flex-direction:column;gap:18px;
+    min-height:clamp(360px,32vw,480px);
+  }
+  .card-header{display:flex;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid rgba(23,21,19,0.06);}
+  .card-avatar{
+    width:42px;height:42px;border-radius:50%;
+    background:#F4EFE8;color:var(--omo-orange);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:18px;letter-spacing:-.02em;
+    flex:0 0 auto;position:relative;
+    box-shadow:var(--shadow-sm);
+  }
+  .card-avatar::after{
+    content:"";position:absolute;right:-1px;bottom:-1px;
+    width:10px;height:10px;border-radius:50%;
+    background:var(--omo-orange);border:2px solid #fff;
+  }
+  .card-id{flex:1;min-width:0;}
+  .card-name{font-weight:700;font-size:14px;color:var(--carbon);}
+  .card-status{font-size:12px;color:var(--carbon);opacity:.55;margin-top:2px;}
+  .card-pill{
+    font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--omo-orange);background:rgba(242,100,25,0.10);
+    padding:6px 11px;border-radius:999px;flex:0 0 auto;
+    box-shadow:var(--shadow-xs);
+  }
+  .card-body{flex:1;display:flex;flex-direction:column;gap:12px;padding-top:6px;}
+  .skeleton{
+    background:#fff;border-radius:14px;
+    height:18px;
+    box-shadow:var(--shadow-xs);
+    border:1px solid rgba(23,21,19,0.04);
+  }
+  .skeleton.lg{height:60px;width:78%;}
+  .skeleton.md{height:48px;width:62%;}
+  .skeleton.accent{
+    background:var(--omo-orange);
+    width:88%;height:78px;align-self:flex-end;
+    border-radius:14px;border:none;
+    box-shadow:var(--shadow-sm);
+  }
+  .card-input{
+    margin-top:auto;display:flex;align-items:center;gap:10px;
+    background:#fff;border-radius:999px;
+    padding:12px 14px;
+    box-shadow:var(--shadow-sm);
+    border:1px solid rgba(23,21,19,0.05);
+  }
+  .card-input .input-line{flex:1;height:6px;border-radius:3px;background:rgba(23,21,19,0.10);max-width:60%;}
+  .card-input .input-send{
+    margin-left:auto;width:28px;height:28px;border-radius:50%;
+    background:var(--omo-orange);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;
+    box-shadow:var(--shadow-sm);
+  }
+
+  /* Five numbered cards in a single inline row */
+  .steps{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:clamp(12px,1vw,20px);align-items:stretch;
+  }
+  .step{
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;
+    gap:0;
+    background:#fff;border-radius:24px;
+    padding:clamp(26px,2.2vw,36px) clamp(24px,2vw,30px) clamp(28px,2.4vw,36px);
+    min-height:clamp(220px,17vw,280px);
+    box-shadow:
+      0 1px 2px rgba(26,26,23,0.04),
+      0 8px 22px -10px rgba(26,26,23,0.10);
+    opacity:0;
+    transform:translateY(30px);
+    transition:
+      transform .5s cubic-bezier(0.25, 1, 0.5, 1),
+      opacity .5s cubic-bezier(0.25, 1, 0.5, 1),
+      box-shadow .4s cubic-bezier(0.25, 1, 0.5, 1),
+      background-color .45s ease;
+    position:relative;overflow:hidden;
+  }
+  .steps.is-revealed .step{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .steps.is-revealed .step:hover{
+    transform:translateY(-8px) scale(1.015);
+    box-shadow:
+      0 20px 38px -12px rgba(26,26,23,0.18),
+      0 4px 16px -4px rgba(26,26,23,0.06);
+  }
+  /* Stagger the entrance of cards */
+  .steps.is-revealed .step:nth-child(1) { transition-delay: 0ms, 0ms, 0ms, 0ms; }
+  .steps.is-revealed .step:nth-child(2) { transition-delay: 100ms, 100ms, 0ms, 0ms; }
+  .steps.is-revealed .step:nth-child(3) { transition-delay: 200ms, 200ms, 0ms, 0ms; }
+  .steps.is-revealed .step:nth-child(4) { transition-delay: 300ms, 300ms, 0ms, 0ms; }
+  .step-num{
+    display:flex;align-items:center;justify-content:center;
+    width:40px;height:40px;flex:0 0 auto;
+    border-radius:50%;
+    background:rgba(242,100,25,0.12);
+    color:var(--omo-orange);
+    transition:background-color .45s ease, color .45s ease;
+    font-family:var(--sans);
+    font-weight:700;line-height:1;letter-spacing:0;
+    font-size:18px;
+    margin:0 0 clamp(20px,2vw,30px);
+    user-select:none;
+  }
+  .step-text{display:flex;flex-direction:column;gap:7px;position:relative;z-index:1;max-width:100%;width:100%;}
+  .step h3, .step .step-title{
+    font-weight:700;letter-spacing:-0.02em;line-height:1.18;
+    font-size:clamp(19px,1.55vw,24px);margin:0;color:#1A1A17;
+    min-height:2.36em;display:flex;align-items:flex-start;
+    transition:color .45s ease;
+  }
+  .step p, .step .step-body{
+    font-size:clamp(14px,1.0vw,16px);line-height:1.5;color:#6B675E;opacity:1;
+    margin:0;text-wrap:pretty;
+    transition:color .45s ease;
+  }
+
+  /* Orange highlight state (sweeps across on scroll; card 4 rests here) */
+  .step.is-payoff, .step.lit{background:var(--omo-orange);}
+  .step.is-payoff .step-num, .step.lit .step-num{background:rgba(255,255,255,0.22);color:#fff;}
+  .step.is-payoff .step-title, .step.lit .step-title{color:#fff;}
+  .step.is-payoff .step-body, .step.lit .step-body{color:#FCE0D4;}
+
+  /* ---------- Section 3: For businesses (green) ---------- */
+  .biz{
+    scroll-margin-top:90px;
+    position:relative;
+    background:#2F7355;
+    border-top-left-radius:clamp(36px,4vw,64px);
+    border-top-right-radius:clamp(36px,4vw,64px);
+    margin-top:-160px;
+    padding:clamp(72px,7vw,112px) var(--safe) clamp(72px,7vw,112px);
+    z-index:3;
+    will-change:transform;
+    box-shadow:
+      0 -1px 0 rgba(23,21,19,0.05),
+      0 -12px 28px -16px rgba(23,21,19,0.18),
+      0 -28px 60px -34px rgba(23,21,19,0.22);
+  }
+  .biz-grid{
+    display:grid;grid-template-columns:1fr 1.12fr;
+    gap:clamp(32px,5vw,88px);align-items:start;
+  }
+  .biz-intro{align-self:center;}
+  .biz-tag{
+    display:inline-block;
+    font-family:'JetBrains Mono','Space Grotesk',monospace;
+    font-size:13px;font-weight:600;letter-spacing:.04em;
+    color:#9FD9B4;margin-bottom:22px;white-space:nowrap;
+  }
+  .biz h2.biz-title{
+    font-weight:700;letter-spacing:-0.045em;line-height:.95;
+    font-size:clamp(40px,5vw,76px);margin:0 0 22px;text-wrap:balance;
+    color:#fff;
+  }
+  .biz h2.biz-title em{font-style:normal;color:var(--omo-orange);}
+  .biz-sub{
+    font-size:clamp(16px,1.25vw,21px);line-height:1.55;font-weight:500;
+    color:rgba(255,255,255,0.85);max-width:40ch;text-wrap:pretty;margin:0 0 clamp(26px,2.6vw,36px);
+  }
+  .biz .cta::before{
+    background:radial-gradient(ellipse at center,
+      rgba(242,100,25,0.40) 0%,
+      rgba(242,100,25,0.20) 32%,
+      rgba(242,100,25,0.06) 60%,
+      rgba(242,100,25,0) 78%);
+  }
+  /* right column — vertical funnel of steps */
+  .biz-points{display:flex;flex-direction:column;padding-top:clamp(2px,0.6vw,8px);}
+  .biz-point{
+    position:relative;
+    display:grid;grid-template-columns:44px 1fr;
+    column-gap:clamp(18px,1.6vw,26px);
+    padding-bottom:clamp(56px,7vw,104px);
+    opacity:0.38;
+    transform:translateX(-20px);
+    transition:transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .biz-point.lit, .biz-point.done{
+    opacity:1;
+    transform:translateX(0);
+  }
+  .biz-point:last-child{padding-bottom:0;}
+  /* connector line linking the numbered badges */
+  .biz-point:not(:last-child)::before{
+    content:"";position:absolute;left:21px;top:46px;bottom:-2px;
+    width:2px;background:rgba(255,255,255,0.20);
+    transition:background-color .4s ease;
+  }
+  .biz-point.done::before{background:var(--omo-orange);}
+  .biz-point .pt-num{
+    width:44px;height:44px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    background:rgba(255,255,255,0.12);
+    color:#CFEAD8;
+    font-family:var(--sans);
+    font-weight:700;font-size:16px;letter-spacing:0;line-height:1;
+    position:relative;z-index:1;
+    transition:background-color .4s ease, color .4s ease;
+  }
+  .biz-point.lit .pt-num{background:var(--omo-orange);color:#fff;}
+  .biz-point .pt-body{display:flex;flex-direction:column;gap:6px;padding-top:clamp(6px,0.6vw,9px);}
+  .biz-point .pt-title{
+    font-weight:700;letter-spacing:-0.02em;line-height:1.15;
+    font-size:clamp(19px,1.55vw,24px);color:#fff;
+  }
+  .biz-point .pt-desc{
+    font-size:clamp(14px,1.0vw,16px);line-height:1.55;
+    color:rgba(255,255,255,0.72);text-wrap:pretty;max-width:46ch;
+  }
+  .biz-foot{
+    display:flex;align-items:baseline;gap:12px;
+    margin-top:clamp(34px,3.6vw,52px);
+    padding-top:clamp(24px,2.6vw,32px);
+    border-top:1px solid rgba(255,255,255,0.16);
+    font-size:clamp(15px,1.15vw,18px);line-height:1.5;font-weight:600;
+    color:#CFEAD8;max-width:64ch;text-wrap:pretty;
+  }
+  .biz-foot .biz-foot-mark{color:#9FD9B4;font-weight:700;flex:0 0 auto;}
+
+  /* ---------- Section 4: What makes us different (differentiator table) ---------- */
+  .diff {
+    scroll-margin-top:90px;
+    position:relative;
+    background:#F4EFE8; /* Soft warm canvas */
+    border-top-left-radius:clamp(36px,4vw,64px);
+    border-top-right-radius:clamp(36px,4vw,64px);
+    margin-top:-80px;
+    padding:clamp(72px,7vw,112px) var(--safe) 0;
+    z-index:4;
+    will-change:transform;
+    box-shadow:
+      0 -1px 0 rgba(23,21,19,0.05),
+      0 -12px 28px -16px rgba(23,21,19,0.18),
+      0 -28px 60px -34px rgba(23,21,19,0.22);
+  }
+  .diff-grid {
+    display:grid;grid-template-columns:0.85fr 1.15fr;
+    gap:clamp(32px,5vw,88px);align-items:center;
+  }
+  .diff-intro { align-self:center; }
+  .diff-tag {
+    display:inline-block;
+    font-family:'JetBrains Mono','Space Grotesk',monospace;
+    font-size:13px;font-weight:600;letter-spacing:.04em;
+    color:#544DC2;margin-bottom:22px;white-space:nowrap;
+  }
+  .diff h2.diff-title {
+    font-weight:700;letter-spacing:-0.045em;line-height:.95;
+    font-size:clamp(40px,5vw,76px);margin:0;color:#544DC2; /* Engaging purple title */
+    text-wrap:balance;
+  }
+  .diff-card {
+    background:var(--omo-orange);
+    padding:clamp(20px,2.5vw,40px);
+    border-radius:28px;
+    box-shadow:var(--shadow-lg);
+  }
+  .comp-table {
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:var(--shadow-md);
+  }
+  .comp-table th, .comp-table td {
+    padding:clamp(16px,1.8vw,24px);
+    border:1px solid rgba(23,21,19,0.08);
+  }
+  .comp-table th {
+    background:#F4EFE8;
+    color:var(--carbon);
+    font-weight:700;
+    font-size:clamp(16px,1.25vw,20px);
+    text-align:left;
+    border-bottom:2px solid rgba(23,21,19,0.12);
+  }
+  .comp-table td { vertical-align:top; }
+  .cell-content {
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    text-align:left;
+  }
+  .cell-content p {
+    font-size:clamp(14px,1.05vw,16px);
+    line-height:1.45;
+    color:var(--carbon);
+  }
+  .badge-icon {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    font-size:14px;
+    font-weight:bold;
+    flex:0 0 auto;
+  }
+  .badge-icon.tick {
+    background:rgba(47,115,85,0.12);
+    color:#2F7355;
+  }
+  .badge-icon.cross {
+    background:rgba(217,83,26,0.12);
+    color:#D9531A;
+  }
+
+  /* ---------- Hero CTA — rounded corners ---------- */
+  .cta{
+    border-radius: 999px;
+  }
+
+
+
+  /* ---------- Section 5: Contact Us ---------- */
+  .contact {
+    scroll-margin-top: 90px;
+    position: relative;
+    background: #1A1A1A;
+    border-top-left-radius: clamp(36px,4vw,64px);
+    border-top-right-radius: clamp(36px,4vw,64px);
+    margin-top: -80px;
+    padding: clamp(72px,7vw,112px) var(--safe) clamp(40px,4vw,60px);
+    z-index: 6;
+    will-change: transform;
+    box-shadow:
+      0 -1px 0 rgba(23,21,19,0.05),
+      0 -12px 28px -16px rgba(23,21,19,0.28),
+      0 -28px 60px -34px rgba(23,21,19,0.32);
+  }
+  .contact-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: clamp(24px, 3vw, 40px);
+  }
+  .contact-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono','Space Grotesk',monospace;
+    font-size: 13px; font-weight: 600; letter-spacing: .04em;
+    color: var(--omo-orange);
+    white-space: nowrap;
+  }
+  .contact h2.contact-title {
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+    font-size: clamp(40px, 5.5vw, 86px);
+    color: #fff;
+    text-wrap: balance;
+    margin: 0;
+  }
+  .contact h2.contact-title em {
+    font-style: italic;
+    color: var(--omo-orange);
+  }
+  .contact-sub {
+    font-size: clamp(16px, 1.25vw, 20px);
+    line-height: 1.6;
+    font-weight: 500;
+    color: rgba(255,255,255,0.72);
+    max-width: 44ch;
+    text-wrap: pretty;
+    margin: 0;
+  }
+  .contact .cta-contact {
+    position: relative; isolation: isolate;
+    display: inline-flex; align-items: center; gap: 14px;
+    background: var(--omo-orange);
+    color: #fff; border: none; cursor: pointer;
+    font-family: var(--sans); font-weight: 700;
+    font-size: clamp(15px,1.15vw,19px); letter-spacing: .04em; text-transform: uppercase;
+    padding: clamp(14px,2vh,20px) clamp(28px,3.5vw,44px);
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: transform .14s ease, background .18s ease, box-shadow .18s ease;
+    box-shadow: 0 1px 2px rgba(23,21,19,0.08), 0 8px 18px -10px rgba(242,100,25,0.55);
+    text-decoration: none;
+  }
+  .contact .cta-contact::before {
+    content: ""; position: absolute; inset: -26px -32px; z-index: -1;
+    background: radial-gradient(ellipse at center,
+      rgba(242,100,25,0.35) 0%,
+      rgba(242,100,25,0.18) 32%,
+      rgba(242,100,25,0.05) 60%,
+      rgba(242,100,25,0) 78%);
+    pointer-events: none; opacity: .9;
+    transition: opacity .25s ease, inset .25s ease;
+  }
+  .contact .cta-contact:hover { background: #d9531a; transform: translateY(-2px); box-shadow: 0 2px 4px rgba(23,21,19,0.08), 0 12px 24px -10px rgba(242,100,25,0.6); }
+  .contact .cta-contact:hover::before { opacity: 1; inset: -32px -40px; }
+  .contact .cta-contact:active { transform: translateY(0); }
+  .contact .cta-contact .arrow { font-size: 1.2em; line-height: 1; transition: transform .15s ease; }
+  .contact .cta-contact:hover .arrow { transform: translateX(5px); }
+
+  /* CTA + contact info row */
+  .cta-contact-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(24px, 3vw, 44px);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+  }
+  .contact-info-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+  .contact-info-main {
+    font-size: clamp(16px, 1.2vw, 20px);
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .contact-email {
+    font-weight: 500;
+    font-size: clamp(13px, 1vw, 16px);
+    color: rgba(255,255,255,0.50);
+    text-decoration: none;
+    transition: color .18s ease;
+  }
+  .contact-email:hover { color: var(--omo-orange); }
+
+  /* Contact footer bar */
+  .contact-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: 100%;
+    margin-top: clamp(28px, 3vw, 44px);
+    padding-top: clamp(24px, 2.6vw, 32px);
+    border-top: 1px solid rgba(255,255,255,0.10);
+    font-size: clamp(13px, 1vw, 15px);
+    color: rgba(255,255,255,0.45);
+    font-weight: 500;
+  }
+  .contact-footer .footer-logo {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: -0.01em;
+  }
+  .contact-footer .footer-links {
+    display: flex; gap: clamp(20px, 2.5vw, 40px);
+  }
+  .contact-footer .footer-links a {
+    color: rgba(255,255,255,0.45);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color .18s ease;
+  }
+  .contact-footer .footer-links a:hover { color: var(--omo-orange); }
+  .contact-footer .footer-copy {
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:960px){
+    .hero{grid-template-columns:1fr;}
+    .left{order:1;padding-top:40px;padding-bottom:50px;}
+    .right{
+      order:2;height:auto;min-height:0;
+      border:none;
+      border-top-left-radius:clamp(28px,8vw,52px);
+      border-top-right-radius:clamp(28px,8vw,52px);
+      padding-top:clamp(70px,16vw,120px);
+      padding-bottom:clamp(28px,6vw,48px);
+      --shift:0px; /* Center photo, scribble, and caption on mobile/tablet */
+    }
+    .photo{max-height:min(62vh,520px);}
+    .photo-wrap{margin-top:0;}
+    .how-head{grid-template-columns:1fr;align-items:start;gap:18px;}
+    .how-grid{grid-template-columns:1fr;}
+    .biz-grid{grid-template-columns:1fr;gap:clamp(24px,5vw,40px);}
+    .product-card{min-height:0;}
+    .step{min-height:0;padding:24px 20px;}
+    .step h3, .step .step-title{min-height:auto;margin-bottom:4px;}
+    .steps{grid-template-columns:1fr;gap:16px;} /* Stack step cards vertically on mobile */
+    .how{padding-bottom:calc(clamp(48px,5vw,80px) + 48px);} /* Reduce bottom padding for smaller overlap */
+    .biz{margin-top:-80px;} /* Reduce overlap collision */
+    .diff-grid{grid-template-columns:1fr;gap:clamp(24px,5vw,40px);} /* Collapse comparison grid */
+    .diff{margin-top:-80px;padding-bottom:0;}
+    .contact{margin-top:-60px;padding-bottom:clamp(56px,7vw,96px);}
+    .contact-footer{flex-direction:column;align-items:flex-start;gap:20px;}
+  }
+  @media (max-width:768px){
+    .nav{gap:clamp(12px,2.5vw,20px);}
+    .nav-link{font-size:clamp(13px,1.8vw,15px);}
+    .nav-link.nav-cta{padding:8px 16px;}
+  }
+  @media (max-width:520px){
+    h1{font-size:clamp(36px,10vw,54px);-webkit-text-stroke:1px var(--carbon);}
+    .nav{gap:clamp(8px,2.2vw,14px);}
+    .nav-link{font-size:clamp(11px,2.8vw,13px);}
+    .nav-link.nav-cta{padding:6px 12px;}
+    .cta{width:100%;justify-content:center;}
+    .right{height:auto;}
+    .photo{max-height:54vh;}
+    .comp-table th, .comp-table td{padding:12px;} /* Compact comparison table on mobile */
+    .cell-content{gap:8px;}
+    .cell-content p{font-size:13px;}
+    .badge-icon{width:20px;height:20px;font-size:11px;}
+  }
+</style>
+</head>
+<body style="font-size: 8px">
+  <div class="page">
+    <header>
+      <img class="logo" src="assets/omo-logo.png" alt="OMO">
+      <nav class="nav" aria-label="Primary">
+        <a class="nav-link" href="#how">How it works</a>
+        <a class="nav-link" href="#for-business">For businesses</a>
+        <a class="nav-link" href="#different">What makes us different</a>
+        <a class="nav-link" href="#contact">Contact Us</a>
+        <a class="nav-link nav-cta" href="#contact" data-tally-open="D4VZ8q" data-tally-layout="modal" data-tally-width="850">Get an OMOship</a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <!-- LEFT -->
+      <section class="left">
+        <h1>No<br>Summer<br>Internship?</h1>
+        <p class="subhead">Get an <span class="omoship">OMOship</span> instead.</p>
+
+        <div class="cta-row">
+          <button class="cta" type="button" data-tally-open="D4VZ8q" data-tally-layout="modal" data-tally-width="850"><span class="label-txt">Get an OMOship</span></button>
+        </div>
+        <p class="note">A remote internship with a real company on a real problem.</p>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="right">
+
+        <div class="scribble">
+          <div class="txt">From home. real companies. <span class="hl">real xp</span></div>
+        </div>
+
+        <div class="photo-wrap">
+          <img class="photo" src="assets/simon-squibb.png" alt="Simon Squibb" style="opacity: 1; object-fit: cover">
+        </div>
+
+        <div class="caption">
+          <span class="label">OMOships are backed by</span>
+          <span class="name">Simon Squibb</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============= Section 2 — OMOships ============= -->
+    <section class="how" id="how" style="background-color: rgb(59, 56, 129)">
+      <div class="how-intro">
+        <span class="product-tag">// HOW IT WORKS
+</span>
+        <h2 class="how-title"><s>Internships</s><br>OMOSHIPS</h2>
+        <p class="how-sub">A real company. A real project. Done from your laptop.</p>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <h3 class="step-title">Pick an OMOship</h3>
+            <p class="step-body">Browse live OMOships. Pick one. You’re in.</p>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <h3 class="step-title">Do the project</h3>
+            <p class="step-body">A real brief from a real company — done from your laptop, your hours. </p>
+          </div>
+        </li>
+        <li class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <h3 class="step-title">Build your proof</h3>
+            <p class="step-body">Walk away with CV-ready evidence you did real work.</p>
+          </div>
+        </li>
+        <li class="step is-payoff">
+          <div class="step-num">4</div>
+          <div class="step-text">
+            <h3 class="step-title">Get hired</h3>
+            <p class="step-body">Stand out to the company that set the brief — and land the role.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============= Section 3 — For businesses ============= -->
+    <section class="biz" id="for-business" style="background-color: rgb(20, 107, 66)">
+      <div class="biz-grid">
+        <div class="biz-intro">
+          <span class="biz-tag">// FOR BUSINESSES</span>
+          <h2 class="biz-title" style="color: rgb(255, 255, 255)"><span style="color: #f9f4f1">The OMO </span><em style="color: rgb(255, 255, 255)">Funnel.</em></h2>
+          <p class="biz-sub">Entry level talent who’ve worked your problems and earned their place by performance.</p>
+        </div>
+
+        <div class="biz-points">
+          <div class="biz-point">
+            <span class="pt-num">01</span>
+            <div class="pt-body">
+              <span class="pt-title">Post</span>
+              <span class="pt-desc">Turn a real piece of your team’s work into a graded OMOship.</span>
+            </div>
+          </div>
+          <div class="biz-point">
+            <span class="pt-num">02</span>
+            <div class="pt-body">
+              <span class="pt-title">See them ranked</span>
+              <span class="pt-desc">Students work the brief, scored on real output. The ranking reflects who can actually do the job.</span>
+            </div>
+          </div>
+          <div class="biz-point">
+            <span class="pt-num">03</span>
+            <div class="pt-body">
+              <span class="pt-title">Hire the top of the funnel</span>
+              <span class="pt-desc">You've seen the work and the scores. Make offers to people who earned it - not just CVs.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= Section 4 — What makes us different ============= -->
+    <section class="diff" id="different">
+      <div class="diff-grid">
+        <div class="diff-intro">
+          <span class="diff-tag">// DIFFERENTIATOR</span>
+          <h2 class="diff-title">What makes<br>us different?</h2>
+        </div>
+        <div class="diff-card">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>OMO</th>
+                <th>Competitors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon tick">✔</span>
+                    <p><strong>Real company problems</strong>, not simulations.</p>
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon cross">✘</span>
+                    <p>Mostly simulated or pre-built exercises.</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon tick">✔</span>
+                    <p>Students are <strong>graded and ranked</strong> on actual output.</p>
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon cross">✘</span>
+                    <p>Students usually just complete tasks or earn completion certificates.</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon tick">✔</span>
+                    <p>Companies get access to a <strong>vetted talent pool</strong> they can hire from directly.</p>
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon cross">✘</span>
+                    <p>Companies mainly get brand exposure or early-career engagement.</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon tick">✔</span>
+                    <p>Built to <strong>connect learning, assessment, and hiring</strong> in one loop.</p>
+                  </div>
+                </td>
+                <td>
+                  <div class="cell-content">
+                    <span class="badge-icon cross">✘</span>
+                    <p>Usually focused on just one part of the journey.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============= Section 5 — Contact Us ============= -->
+    <section class="contact" id="contact">
+      <div class="contact-inner">
+        <span class="contact-tag">// GET STARTED</span>
+        <h2 class="contact-title">Get experience<br><em>today.</em></h2>
+        <p class="contact-sub">Your career gap starts closing the moment you sign up. Real projects with Real companies. Real experience.</p>
+        <div class="cta-contact-row">
+          <button class="cta-contact" type="button" data-tally-open="D4VZ8q" data-tally-layout="modal" data-tally-width="850">
+            Get an OMOship <span class="arrow">→</span>
+          </button>
+          <div class="contact-info">
+            <span class="contact-info-label">Have Questions?</span>
+            <span class="contact-info-main">Contact Us <a href="mailto:buildingomo@gmail.com" class="contact-email">buildingomo@gmail.com</a></span>
+          </div>
+        </div>
+        <div class="contact-footer">
+          <span class="footer-logo">OMO</span>
+          <div class="footer-links">
+            <a href="#how">How It Works</a>
+            <a href="#for-business">For Businesses</a>
+            <a href="#different">What Makes Us Different</a>
+          </div>
+          <span class="footer-copy">© 2026 One Million Opportunities Ltd</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const COPY = {
+      students: {
+        h1:'No<br>Summer<br>Internship?',
+        subPre:'Get an ', subEm:'OMOship', subPost:' instead.',
+        cta:'Get an OMOship',
+        howTitle:'OMOships',
+        howSub:'A real company. A real project. Done from your laptop.',
+        steps:[
+          {n:'1',t:'Pick an OMOship',b:'Browse live OMOships. Pick one. You’re in.'},
+          {n:'2',t:'Do the project',b:'A real brief from a real company — done from your laptop, your hours.'},
+          {n:'3',t:'Build your proof',b:'Walk away with CV-ready evidence you did real work.'},
+          {n:'4',t:'Get hired',b:'Stand out to the company that set the brief — and land the role.'}
+        ]
+      },
+      business: {
+        h1:'Need vetted<br>early talent?',
+        subPre:'Post an ', subEm:'OMOship', subPost:' today.',
+        cta:'Post an OMOship',
+        howTitle:'OMOships',
+        howSub:'A real brief, vetted candidates, work delivered from their laptops.',
+        steps:[
+          {n:'1',t:'Post an OMOship',b:'Scope a real piece of work an early-career hire could own.'},
+          {n:'2',t:'Get it done',b:'Vetted candidates deliver against your brief, from their laptops.'},
+          {n:'3',t:'See real proof',b:'Judge candidates on actual output — not a CV.'},
+          {n:'4',t:'Hire the best',b:'Bring on the person who already understands your problem.'}
+        ]
+      }
+    };
+    const h1 = document.querySelector('h1');
+    const subhead = document.querySelector('.subhead');
+    const ctaTxt = document.querySelector('.cta .label-txt');
+    const howTitle = document.querySelector('.how-title');
+    const howSub = document.querySelector('.how-sub');
+    const stepEls = document.querySelectorAll('.steps .step');
+    function applyMode(mode){
+      const c = COPY[mode];
+      h1.innerHTML = c.h1;
+      subhead.innerHTML = c.subPre + '<span class="omoship">' + c.subEm + '</span>' + c.subPost;
+      ctaTxt.textContent = c.cta;
+      howTitle.textContent = c.howTitle;
+      howSub.textContent = c.howSub;
+      stepEls.forEach((el,i)=>{
+        const s = c.steps[i];
+        el.querySelector('.step-num').textContent = s.n;
+        el.querySelector('.step-title').innerHTML = s.t;
+        el.querySelector('.step-body').textContent = s.b;
+      });
+    }
+    document.querySelectorAll('.nav-link[data-mode]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.nav-link[data-mode]').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        applyMode(btn.dataset.mode);
+        if(btn.dataset.mode === 'business'){
+          document.getElementById('for-business').scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      });
+    });
+
+    /* Glass pill BG on scroll + card parallax pull-up */
+    const headerEl = document.querySelector('header');
+    const howEl = document.querySelector('.how');
+    const heroEl = document.querySelector('.hero');
+    const MAX_OVERLAP = 18;   // px the card can lift over the hero
+    const RATE = 0.08;        // fraction of scroll converted to lift
+    function syncHeader(){
+      const y = window.scrollY;
+      if(y > 60) headerEl.classList.add('is-scrolled');
+      else headerEl.classList.remove('is-scrolled');
+      // Pull the card up as we scroll, but only while the hero is on-screen
+      const heroBottom = heroEl.getBoundingClientRect().bottom;
+      if(heroBottom > -200){
+        const lift = Math.min(MAX_OVERLAP, Math.max(0, y * RATE));
+        howEl.style.transform = `translateY(${-lift}px)`;
+      } else {
+        howEl.style.transform = `translateY(${-MAX_OVERLAP}px)`;
+      }
+    }
+    window.addEventListener('scroll', syncHeader, {passive:true});
+    syncHeader();
+
+    /* Business card slides UP into its resting overlap as it scrolls into view */
+    (function(){
+      const bizEl = document.querySelector('.biz');
+      if(!bizEl) return;
+      const TRAVEL = 96;   // px it starts below its rest position
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduce){ bizEl.style.transform = 'translateY(0)'; return; }
+      function syncBiz(){
+        const r = bizEl.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const start = vh;          // p=0 when card top enters from the bottom edge
+        const end = vh * 0.42;     // p=1 once its top reaches ~42% up the viewport
+        let p = (start - r.top) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+        bizEl.style.transform = `translateY(${(1 - p) * TRAVEL}px)`;
+      }
+      window.addEventListener('scroll', syncBiz, {passive:true});
+      window.addEventListener('resize', syncBiz);
+      syncBiz();
+    })();
+
+    /* Diff card slides UP into its resting overlap as it scrolls into view */
+    (function(){
+      const diffEl = document.querySelector('.diff');
+      if(!diffEl) return;
+      const TRAVEL = 180;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduce){ diffEl.style.transform = 'translateY(0)'; return; }
+      function syncDiff(){
+        const r = diffEl.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const start = vh;
+        const end = vh * 0.30;
+        let p = (start - r.top) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+        diffEl.style.transform = `translateY(${(1 - p) * TRAVEL}px)`;
+      }
+      window.addEventListener('scroll', syncDiff, {passive:true});
+      window.addEventListener('resize', syncDiff);
+      syncDiff();
+    })();
+
+    /* Contact card slides UP into its resting overlap as it scrolls into view */
+    (function(){
+      const contactEl = document.querySelector('.contact');
+      if(!contactEl) return;
+      const TRAVEL = 180;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if(reduce){ contactEl.style.transform = 'translateY(0)'; return; }
+      function syncContact(){
+        const r = contactEl.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const start = vh;
+        const end = vh * 0.30;
+        let p = (start - r.top) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+        contactEl.style.transform = `translateY(${(1 - p) * TRAVEL}px)`;
+      }
+      window.addEventListener('scroll', syncContact, {passive:true});
+      window.addEventListener('resize', syncContact);
+      syncContact();
+    })();
+
+    /* Scroll-triggered orange sweep across the step cards: 1 → 2 → 3 → 4 */
+    (function(){
+      const cards = [...document.querySelectorAll('.steps .step')];
+      if(!cards.length) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const stepsWrap = document.querySelector('.steps');
+      if(reduce || !('IntersectionObserver' in window)){
+        if (stepsWrap) stepsWrap.classList.add('is-revealed');
+        // Static end-state: only card 4 orange
+        cards.forEach((c,i)=>c.classList.toggle('lit', i===cards.length-1));
+        cards.forEach(c=>c.classList.remove('is-payoff'));
+        cards[cards.length-1].classList.add('lit');
+        return;
+      }
+      // Reset to all-white so the sweep can play
+      cards.forEach(c=>c.classList.remove('is-payoff','lit'));
+      let played = false;
+      const STEP_MS = 480;
+      const play = ()=>{
+        if(played) return;
+        played = true;
+        if (stepsWrap) stepsWrap.classList.add('is-revealed');
+        cards.forEach((card,i)=>{
+          setTimeout(()=>{
+            cards.forEach(c=>c.classList.remove('lit'));
+            card.classList.add('lit');   // last one (card 4) stays lit
+          }, i*STEP_MS);
+        });
+      };
+      // Trigger when the cards row scrolls into the lower part of the viewport.
+      const checkInView = ()=>{
+        if(played) return;
+        const r = stepsWrap.getBoundingClientRect();
+        if(r.top < window.innerHeight*0.85 && r.bottom > 0){
+          play();
+          window.removeEventListener('scroll', checkInView);
+        }
+      };
+      window.addEventListener('scroll', checkInView, {passive:true});
+      checkInView();
+      // IntersectionObserver as a secondary trigger (covers fast jumps/anchor nav)
+      if('IntersectionObserver' in window){
+        const io = new IntersectionObserver((entries)=>{
+          entries.forEach(e=>{ if(e.isIntersecting){ play(); io.disconnect(); } });
+        }, {threshold:0.18, rootMargin:'0px 0px -12% 0px'});
+        io.observe(stepsWrap);
+      }
+    })();
+
+    /* Funnel badge sweep: 01 → 02 → 03, lights in sequence and rests on 03 */
+    (function(){
+      const pts = [...document.querySelectorAll('.biz-points .biz-point')];
+      if(!pts.length) return;
+      const wrap = document.querySelector('.biz-points');
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const rest = ()=>{
+        pts.forEach((p,i)=>{
+          p.classList.toggle('lit', i===pts.length-1);
+          if(i < pts.length-1) p.classList.add('done');
+        });
+      };
+      if(reduce || !('IntersectionObserver' in window)){ rest(); return; }
+      let played = false;
+      const STEP_MS = 480;
+      const play = ()=>{
+        if(played) return;
+        played = true;
+        pts.forEach((p,i)=>{
+          setTimeout(()=>{
+            pts.forEach(q=>q.classList.remove('lit'));
+            p.classList.add('lit');                 // last one stays lit
+            if(i>0) pts[i-1].classList.add('done');  // fill the connector trail
+          }, i*STEP_MS);
+        });
+      };
+      const checkInView = ()=>{
+        if(played) return;
+        const r = wrap.getBoundingClientRect();
+        if(r.top < window.innerHeight*0.82 && r.bottom > 0){
+          play();
+          window.removeEventListener('scroll', checkInView);
+        }
+      };
+      window.addEventListener('scroll', checkInView, {passive:true});
+      checkInView();
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{ if(e.isIntersecting){ play(); io.disconnect(); } });
+      }, {threshold:0.28, rootMargin:'0px 0px -10% 0px'});
+      io.observe(wrap);
+    })();
+  </script>
+</body>
+</html>
+
+<style id="__om-edit-overrides">
+:is(h1,h2,h3,h4,h5,h6) >div { height: 13px !important }
+:is(h1,h2,h3,h4,h5,h6) >div { height: 132px !important }
+</style>
