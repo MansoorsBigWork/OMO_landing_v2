@@ -1,0 +1,25 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Serve the app for every path so client-side routes like /privacypolicies load on a direct visit
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers. The CSP allows only this site, Supabase (accounts), PostHog (analytics, US region)
+# and Google Fonts. If you add another third-party service, add its domain here or the browser will block it.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://us-assets.i.posthog.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://us.i.posthog.com https://us-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; worker-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Strict-Transport-Security = "max-age=31536000"
+    Cross-Origin-Opener-Policy = "same-origin"
