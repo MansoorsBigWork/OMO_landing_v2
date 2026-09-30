@@ -1,26 +1,17 @@
-import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router'
-import logo from '../assets/omo-logo.png'
-import { getCurrentUser, onSignedOut, signOut } from '../lib/auth.js'
+import { useEffect } from 'react'
+import { Navigate } from 'react-router'
+import { PortalError, PortalHeader, usePortalUser } from '../components/PortalShell.jsx'
+import { landingPathFor } from '../lib/auth.js'
 import '../styles/portal.css'
 
-const ROLE_LABELS = { student: 'Student', employer: 'Employer', admin: 'Admin' }
+const ROLE_LABELS = { employer: 'Employer', admin: 'Admin' }
 
 const INTROS = {
-  student: 'This is your OMO home. Finish your profile so employers can find you.',
   employer: 'Manage your company details and, once you’re verified, find students for your OMOships.',
   admin: 'Review employers waiting for approval and manage accounts.',
 }
 
 // [column in Supabase, label, optional display format]
-const STUDENT_FIELDS = [
-  ['university', 'University'],
-  ['course', 'Course'],
-  ['graduation_year', 'Graduation year'],
-  ['bio', 'Bio'],
-  ['linkedin_url', 'LinkedIn'],
-  ['cv_path', 'CV', () => 'Uploaded'],
-]
 const EMPLOYER_FIELDS = [
   ['company_name', 'Company name'],
   ['website', 'Website'],
@@ -60,69 +51,27 @@ function PlaceholderCard({ title, children }) {
 }
 
 export default function Portal() {
-  const navigate = useNavigate()
-  const [user, setUser] = useState() // undefined while loading, null when signed out
-  const [loadError, setLoadError] = useState('')
+  const { user, loadError, handleSignOut } = usePortalUser()
 
   useEffect(() => {
     document.title = 'Portal — OMO'
   }, [])
 
-  useEffect(() => {
-    let current = true
-    getCurrentUser()
-      .then((found) => {
-        if (current) setUser(found)
-      })
-      .catch((error) => {
-        if (current) setLoadError(error.message)
-      })
-    return () => {
-      current = false
-    }
-  }, [])
-
-  // Leave if the session ends elsewhere (signed out in another tab, expired login)
-  useEffect(() => onSignedOut(() => navigate('/login', { replace: true })), [navigate])
-
-  async function handleSignOut() {
-    await signOut()
-    navigate('/login', { replace: true })
-  }
-
-  if (loadError) {
-    return (
-      <div className="portal">
-        <main className="portal-main">
-          <h1>Something went wrong</h1>
-          <p className="portal-intro">We couldn’t load your account. {loadError}</p>
-          <button type="button" className="portal-signout portal-error-action" onClick={handleSignOut}>
-            Sign out
-          </button>
-        </main>
-      </div>
-    )
-  }
+  if (loadError) return <PortalError message={loadError} onSignOut={handleSignOut} />
   if (user === undefined) return <div className="portal" aria-busy="true" />
   if (user === null) return <Navigate to="/login" replace />
+  // Students only ever see their dashboard (or onboarding); this page is for employers and admins
+  if (user.role === 'student') return <Navigate to={landingPathFor(user)} replace />
 
-  const firstName = user.fullName?.trim().split(/\s+/)[0] || user.email
+  const firstName = user.firstName || user.fullName?.trim().split(/\s+/)[0]
 
   return (
     <div className="portal">
-      <header className="portal-header">
-        <Link to="/">
-          <img className="portal-logo" src={logo} alt="OMO" />
-        </Link>
-        <div className="portal-user">
-          <span className="portal-email">{user.email}</span>
-          <button type="button" className="portal-signout" onClick={handleSignOut}>Sign out</button>
-        </div>
-      </header>
+      <PortalHeader email={user.email} onSignOut={handleSignOut} />
 
       <main className="portal-main">
         <span className="portal-tag">{`// ${ROLE_LABELS[user.role] ?? 'OMO'} portal`}</span>
-        <h1>Welcome, {firstName}</h1>
+        <h1 className="ph-no-capture">{firstName ? `Welcome, ${firstName}` : 'Welcome'}</h1>
         <p className="portal-intro">{INTROS[user.role]}</p>
 
         {user.role === 'employer' && !user.isVerified && (
@@ -134,12 +83,6 @@ export default function Portal() {
         )}
 
         <div className="portal-grid">
-          {user.role === 'student' && (
-            <>
-              <DetailsCard title="Your profile" fields={STUDENT_FIELDS} values={user.details} />
-              <PlaceholderCard title="OMOships">Live OMOships will appear here.</PlaceholderCard>
-            </>
-          )}
           {user.role === 'employer' && (
             <>
               <DetailsCard title="Company details" fields={EMPLOYER_FIELDS} values={user.details} />

@@ -1,0 +1,128 @@
+/* ---------- OMOships dashboard ---------- */
+html.no-overscroll, html.no-overscroll body{overscroll-behavior-y:none;}
+/* header contents line up with the page column on wide screens */
+.om .portal-header{
+  padding-inline:max(var(--safe), calc((100% - 1200px) / 2));
+  background:#fff;
+}
+
+.om{display:flex;flex-direction:column;}
+.om-main{
+  flex:1 0 auto;width:100%;
+  max-width:calc(1200px + 2 * var(--safe));
+  padding-top:clamp(32px,5vw,64px);
+}
+
+.om-intro{margin-bottom:clamp(32px,4.5vw,56px);}
+.om-date{
+  margin-bottom:10px;
+  font-family:'JetBrains Mono','Space Grotesk',monospace;
+  font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--omo-orange);
+}
+.portal .om-greeting{
+  margin:0;
+  font-size:clamp(32px,4.6vw,56px);line-height:1.02;text-wrap:balance;
+}
+
+.om-section-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin-bottom:18px;padding-bottom:14px;
+  border-bottom:1px solid rgba(27,33,64,0.1);
+}
+.om-section-head h2{font-family:var(--display);font-weight:400;font-size:20px;color:var(--portal-navy);}
+.om-count{font-size:14px;color:var(--portal-muted);}
+
+.om-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(16px,2vw,28px);
+}
+
+.om-card{
+  display:flex;flex-direction:column;
+  background:#fff;border-radius:18px;overflow:hidden;
+  border:1px solid rgba(27,33,64,0.06);box-shadow:var(--shadow-md);
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.om-card:not(.om-card-soon):hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+
+/* picture with the skills on top */
+.om-media{position:relative;aspect-ratio:16 / 10;overflow:hidden;}
+.om-map, .om-photo{display:block;width:100%;height:100%;}
+.om-photo{object-fit:cover;background:#E5E5E5;}
+.om-map-route{animation:om-route 1.6s linear infinite;}
+@keyframes om-route{to{stroke-dashoffset:-36;}}
+@media (prefers-reduced-motion:reduce){.om-map-route{animation:none;}}
+
+.om-skills{
+  position:absolute;top:12px;left:12px;right:12px;
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+}
+.om-skills-label{
+  padding:3px 8px;border-radius:999px;
+  background:var(--omo-orange);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+}
+.om-skills ul{display:flex;flex-wrap:wrap;gap:6px;list-style:none;}
+.om-skills li{
+  padding:5px 10px;border-radius:999px;
+  background:rgba(255,255,255,0.94);color:var(--portal-navy);
+  font-size:12.5px;font-weight:600;line-height:1.2;
+  box-shadow:0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* title and progress */
+.om-body{
+  flex:1;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:18px 20px 20px;
+}
+.om-title{
+  font-family:'Archivo','Space Grotesk',sans-serif;
+  font-size:clamp(17px,1.35vw,20px);font-weight:700;line-height:1.25;letter-spacing:-0.01em;
+  color:var(--portal-navy);text-wrap:balance;
+}
+.om-progress{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.om-ring{width:52px;height:52px;}
+.om-ring circle{fill:none;stroke-width:4.5;}
+.om-ring-track{stroke:#ECE5DB;}
+.om-ring-value{
+  stroke:var(--omo-orange);stroke-linecap:round;
+  transform:rotate(-90deg);transform-origin:24px 24px; /* start at 12 o'clock */
+  transition:stroke-dashoffset .6s ease;
+}
+.om-ring-value.is-empty{visibility:hidden;} /* a round cap would still draw a dot at 0% */
+.om-ring text{
+  font-family:'Archivo','Space Grotesk',sans-serif;font-size:12px;font-weight:700;fill:var(--portal-navy);
+}
+.om-progress-label{font-size:11px;font-weight:600;color:var(--portal-muted);white-space:nowrap;}
+
+/* coming-soon card: a blurred teaser with a sharp wrench on top */
+.om-card-soon{position:relative;}
+.om-soon-blur{
+  display:flex;flex-direction:column;flex:1;
+  filter:blur(6px);transform:scale(1.04); /* scale hides the soft blurred edge */
+  pointer-events:none;user-select:none;
+}
+.om-spanner{
+  position:absolute;top:50%;left:50%;
+  width:clamp(64px,24%,92px);
+  transform:translate(-50%,-50%) scaleX(-1); /* mirrored so the jaw faces right */
+  filter:drop-shadow(0 6px 14px rgba(23,21,19,0.3));
+}
+
+/* dark footer with rounded top, as on the privacy policy page */
+.om-footer{
+  background:var(--carbon);
+  border-top-left-radius:clamp(28px,4vw,56px);
+  border-top-right-radius:clamp(28px,4vw,56px);
+  padding:clamp(32px,4vw,52px) max(var(--safe), calc((100% - 1200px) / 2));
+}
+.om-footer .contact-footer{margin-top:0;padding-top:0;border-top:0;}
+
+@media (max-width:960px){
+  .om-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:640px){
+  .om-grid{grid-template-columns:minmax(0,1fr);}
+}

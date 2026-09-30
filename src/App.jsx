@@ -5,6 +5,8 @@ import PrivacyPolicy from './pages/PrivacyPolicy.jsx'
 
 // Loaded on demand so the public pages don't download the Supabase client
 const Portal = lazy(() => import('./pages/Portal.jsx'))
+const OMOships = lazy(() => import('./pages/OMOships.jsx'))
+const Onboarding = lazy(() => import('./pages/Onboarding.jsx'))
 const Login = lazy(() => import('./pages/auth/Login.jsx'))
 const SignUp = lazy(() => import('./pages/auth/SignUp.jsx'))
 const Verify = lazy(() => import('./pages/auth/Verify.jsx'))
@@ -54,6 +56,8 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/portal" element={<Portal />} />
+        <Route path="/omoships" element={<OMOships />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>

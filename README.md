@@ -22,7 +22,25 @@ npm run preview  # serves the built site locally
 - `/` — landing page ([src/pages/Home.jsx](src/pages/Home.jsx))
 - `/privacypolicies` — privacy policy ([src/pages/PrivacyPolicy.jsx](src/pages/PrivacyPolicy.jsx))
 - `/login`, `/signup`, `/verify`, `/forgot-password`, `/reset-password` — sign-in screens ([src/pages/auth/](src/pages/auth/)), backed by Supabase Auth via [src/lib/auth.js](src/lib/auth.js)
-- `/portal` — signed-in area ([src/pages/Portal.jsx](src/pages/Portal.jsx))
+- `/onboarding` — first-login questions for students ([src/pages/Onboarding.jsx](src/pages/Onboarding.jsx)); students go here until they finish it
+- `/omoships` — the student dashboard ([src/pages/OMOships.jsx](src/pages/OMOships.jsx))
+- `/portal` — signed-in area for employers and admins; students are redirected to `/omoships` ([src/pages/Portal.jsx](src/pages/Portal.jsx))
+
+## Onboarding reference data
+
+The university and subject search on `/onboarding` reads two static files, loaded only on that page:
+
+- [src/data/uk-providers.json](src/data/uk-providers.json) — `{ ukprn, name }`, from the official UK register of higher education providers
+- [src/data/hecos.json](src/data/hecos.json) — `{ code, name }`, from HESA's HECoS vocabulary
+
+Both currently hold **10 sample entries** so the search works during development. Regenerate them from the official CSVs before launch:
+
+```sh
+node scripts/build-reference-data.mjs providers path/to/providers.csv
+node scripts/build-reference-data.mjs hecos path/to/hecos.csv
+```
+
+The script finds the code and name columns by header (`UKPRN` / `Provider name`, `Code` / `Label`). If a CSV names them differently, pass `--code "<header>" --name "<header>"`. Rows without a valid code (8 digits starting with 1 for UKPRNs, 6 digits for HECoS) are skipped and counted.
 
 ## Deploying
 
