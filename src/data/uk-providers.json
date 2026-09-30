@@ -1,0 +1,12 @@
+[
+  { "ukprn": "10003270", "name": "Imperial College London" },
+  { "ukprn": "10003645", "name": "King's College London" },
+  { "ukprn": "10006840", "name": "University of Birmingham" },
+  { "ukprn": "10007774", "name": "University of Oxford" },
+  { "ukprn": "10007784", "name": "University College London" },
+  { "ukprn": "10007786", "name": "University of Bristol" },
+  { "ukprn": "10007788", "name": "University of Cambridge" },
+  { "ukprn": "10007790", "name": "University of Edinburgh" },
+  { "ukprn": "10007792", "name": "University of Liverpool" },
+  { "ukprn": "10007798", "name": "University of Manchester" }
+]

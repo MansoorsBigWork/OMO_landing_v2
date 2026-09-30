@@ -1,27 +1,17 @@
-import { useEffect, useState } from 'react'
-import { Link, useOutletContext } from 'react-router'
-import logo from '../assets/omo-logo.png'
-import { coursePath, omoships } from '../courses/index.ts'
-import { loadCourseSummaries } from '../courses/shared/lib/progressStore.ts'
+import { useEffect } from 'react'
+import { Navigate, useOutletContext } from 'react-router'
+import { PortalHeader } from '../components/PortalShell.jsx'
+import { landingPathFor } from '../lib/auth.js'
 import '../styles/portal.css'
 
-const ROLE_LABELS = { student: 'Student', employer: 'Employer', admin: 'Admin' }
+const ROLE_LABELS = { employer: 'Employer', admin: 'Admin' }
 
 const INTROS = {
-  student: 'This is your OMO home. Pick an OMOship to start, or carry on where you left off.',
-  employer: 'Manage your company details and, once you’re verified, find students for your OMOships.',
+  employer: 'Manage your company details and, once youâ€™re verified, find students for your OMOships.',
   admin: 'Review employers waiting for approval and manage accounts.',
 }
 
 // [column in Supabase, label, optional display format]
-const STUDENT_FIELDS = [
-  ['university', 'University'],
-  ['course', 'Course'],
-  ['graduation_year', 'Graduation year'],
-  ['bio', 'Bio'],
-  ['linkedin_url', 'LinkedIn'],
-  ['cv_path', 'CV', () => 'Uploaded'],
-]
 const EMPLOYER_FIELDS = [
   ['company_name', 'Company name'],
   ['website', 'Website'],
@@ -60,106 +50,41 @@ function PlaceholderCard({ title, children }) {
   )
 }
 
-// What a student sees next to each course: where they are with it
-function courseStatus(summary) {
-  if (!summary?.enrolledAt) return { key: 'new', label: 'Not started' }
-  if (summary.submission?.status === 'released') return { key: 'graded', label: 'Results out' }
-  if (summary.submission) return { key: 'submitted', label: 'Submitted' }
-  return { key: 'active', label: 'In progress' }
-}
-
-function OmoshipsCard({ userId }) {
-  const [summaries, setSummaries] = useState(null) // null while loading
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    let current = true
-    loadCourseSummaries(userId)
-      .then((found) => {
-        if (current) setSummaries(found)
-      })
-      .catch((err) => {
-        if (current) setError(err.message)
-      })
-    return () => {
-      current = false
-    }
-  }, [userId])
-
-  return (
-    <section className="portal-card">
-      <h2>OMOships</h2>
-      <ul className="portal-courses">
-        {omoships.map((course) => {
-          const summary = summaries?.[course.slug]
-          const status = summaries ? courseStatus(summary) : null
-          return (
-            <li key={course.slug}>
-              <div className="portal-course-text">
-                <strong>{course.title}</strong>
-                <span>{course.strapline}</span>
-              </div>
-              <div className="portal-course-actions">
-                {status && <span className={`portal-status is-${status.key}`}>{status.label}</span>}
-                <Link className="portal-btn portal-btn-primary" to={coursePath(course.slug)}>
-                  {summary?.enrolledAt ? 'Continue' : 'View OMOship'}
-                </Link>
-              </div>
-            </li>
-          )
-        })}
-      </ul>
-      {error && <p className="portal-card-error">We couldn’t load your progress. {error}</p>}
-    </section>
-  )
-}
-
 export default function Portal() {
-  const { user, signOut } = useOutletContext()
+  const { user, signOut } = useOutletContext() // RequireAuth has already loaded a signed-in user
 
   useEffect(() => {
-    document.title = 'Portal — OMO'
+    document.title = 'Portal â€” OMO'
   }, [])
 
-  const firstName = user.fullName?.trim().split(/\s+/)[0] || user.email
+  // Students only ever see their dashboard (or onboarding); this page is for employers and admins
+  if (user.role === 'student') return <Navigate to={landingPathFor(user)} replace />
+
+  const firstName = user.firstName || user.fullName?.trim().split(/\s+/)[0]
 
   return (
     <div className="portal">
-      <header className="portal-header">
-        <Link to="/">
-          <img className="portal-logo" src={logo} alt="OMO" />
-        </Link>
-        <div className="portal-user">
-          <span className="portal-email">{user.email}</span>
-          <button type="button" className="portal-signout" onClick={signOut}>Sign out</button>
-        </div>
-      </header>
+      <PortalHeader email={user.email} onSignOut={signOut} />
 
       <main className="portal-main">
         <span className="portal-tag">{`// ${ROLE_LABELS[user.role] ?? 'OMO'} portal`}</span>
-        <h1>Welcome, {firstName}</h1>
+        <h1 className="ph-no-capture">{firstName ? `Welcome, ${firstName}` : 'Welcome'}</h1>
         <p className="portal-intro">{INTROS[user.role]}</p>
 
         {user.role === 'employer' && !user.isVerified && (
           <div className="portal-notice" role="status">
             <strong>Your account is pending verification.</strong>
-            We check every employer by hand and will email you once you’re approved. Until then, student profiles
+            We check every employer by hand and will email you once youâ€™re approved. Until then, student profiles
             stay hidden.
           </div>
         )}
 
         <div className="portal-grid">
-          {user.role === 'student' && (
-            <>
-              <OmoshipsCard userId={user.id} />
-              <DetailsCard title="Your profile" fields={STUDENT_FIELDS} values={user.details} />
-            </>
-          )}
           {user.role === 'employer' && (
             <>
               <DetailsCard title="Company details" fields={EMPLOYER_FIELDS} values={user.details} />
               <PlaceholderCard title="Students">
-                Once you’re verified, you’ll be able to browse student profiles here.
+                Once youâ€™re verified, youâ€™ll be able to browse student profiles here.
               </PlaceholderCard>
             </>
           )}

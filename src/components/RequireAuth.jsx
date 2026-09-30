@@ -47,6 +47,8 @@ export default function RequireAuth() {
   }
   if (user === undefined) return <div className="portal" aria-busy="true" />
   if (user === null) return <Navigate to="/login" replace />
+  // Students finish onboarding before any other signed-in page
+  if (user.role === 'student' && !user.onboardingCompleted) return <Navigate to="/onboarding" replace />
 
   return <Outlet context={{ user, signOut: handleSignOut }} />
 }

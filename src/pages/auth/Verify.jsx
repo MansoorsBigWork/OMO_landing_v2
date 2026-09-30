@@ -3,7 +3,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router'
 import AuthLayout from '../../components/auth/AuthLayout.jsx'
 import CodeInput from '../../components/auth/CodeInput.jsx'
 import SuccessState from '../../components/auth/SuccessState.jsx'
-import { resendCode, verifyCode } from '../../lib/auth.js'
+import { landingPath, resendCode, verifyCode } from '../../lib/auth.js'
 
 const CODE_LENGTH = 6
 const RESEND_SECONDS = 60 // Supabase allows one email per address about every 60 seconds
@@ -25,7 +25,7 @@ export default function Verify() {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [verified, setVerified] = useState(false)
+  const [redirectTo, setRedirectTo] = useState('') // set once the sign-up code is accepted
   const [cooldown, setCooldown] = useState(RESEND_SECONDS)
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function Verify() {
     try {
       await verifyCode({ email, code, type })
       if (type === 'recovery') navigate('/reset-password', { replace: true, state: { email } })
-      else setVerified(true)
+      else setRedirectTo(await landingPath())
     } catch (err) {
       setError(err.message)
       setSubmitting(false)
@@ -69,10 +69,10 @@ export default function Verify() {
 
   if (!email) return <Navigate to={step.back} replace />
 
-  if (verified) {
+  if (redirectTo) {
     return (
       <AuthLayout title="Signed in">
-        <SuccessState message="Logging you in right away…" redirectTo="/portal" />
+        <SuccessState message="Logging you in right away…" redirectTo={redirectTo} />
       </AuthLayout>
     )
   }

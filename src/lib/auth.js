@@ -103,7 +103,10 @@ export function onSignedOut(callback) {
 
 // role → [table, columns] holding that role's extra details
 const DETAILS = {
-  student: ['student_profiles', 'university, course, graduation_year, bio, linkedin_url, cv_path'],
+  student: [
+    'student_profiles',
+    'education_stage, university, subject_name, graduation_year, linkedin_url, cv_path, onboarding_completed_at',
+  ],
   employer: ['employer_profiles', 'company_name, website, job_title, is_verified'],
 }
 
@@ -115,7 +118,7 @@ export async function getCurrentUser() {
   } = await supabase.auth.getUser()
   if (!user) return null
 
-  const profile = await run(supabase.from('profiles').select('role, full_name, email').eq('id', user.id).single())
+  const profile = await run(supabase.from('profiles').select('role, first_name, full_name, email, welcomed_at').eq('id', user.id).single())
   const [table, columns] = DETAILS[profile.role] ?? []
   const details = table ? await run(supabase.from(table).select(columns).eq('id', user.id).maybeSingle()) : null
 
@@ -123,8 +126,51 @@ export async function getCurrentUser() {
     id: user.id,
     email: profile.email ?? user.email,
     fullName: profile.full_name ?? '',
+    firstName: profile.first_name?.trim() ?? '',
     role: profile.role,
+    welcomedAt: profile.welcomed_at,
+    onboardingCompleted: Boolean(details?.onboarding_completed_at),
     isVerified: Boolean(details?.is_verified),
     details: details ?? {},
   }
+}
+
+
+/* Where a signed-in user belongs: students who haven't finished onboarding go to /onboarding,
+   other students to their dashboard (/omoships), employers and admins to /portal. Students never see /portal. */
+export function landingPathFor(user) {
+  if (!user) return '/login'
+  if (user.role === 'student') return user.onboardingCompleted ? '/omoships' : '/onboarding'
+  return '/portal'
+}
+
+// Used right after sign-in; falls back to /omoships, which shows its own error if the account can't load
+export async function landingPath() {
+  const user = await getCurrentUser().catch(() => null)
+  return user ? landingPathFor(user) : '/omoships'
+}
+
+// The save function's own messages are safe to show; anything else gets the generic one
+const ONBOARDING_MESSAGES = [
+  'First name and last name are required',
+  'Choose between one and three goals',
+  'University and subject are required',
+  'Tell us when you finish',
+]
+
+/* Saves every onboarding answer in one call; the database stores all of them or none. */
+export async function completeOnboarding(answers) {
+  const { error } = await client().rpc('complete_student_onboarding', answers)
+  if (!error) return
+  const safe = ONBOARDING_MESSAGES.find((message) => error.message?.includes(message))
+  throw new AuthError(safe ?? 'Something went wrong. Please try again.', error.code)
+}
+
+// Records the first dashboard visit so later visits get a time-of-day greeting instead
+export async function markWelcomed() {
+  const {
+    data: { user },
+  } = await client().auth.getUser()
+  if (!user) return
+  await client().from('profiles').update({ welcomed_at: new Date().toISOString() }).eq('id', user.id)
 }

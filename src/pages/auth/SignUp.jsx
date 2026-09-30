@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import AuthLayout from '../../components/auth/AuthLayout.jsx'
 import Field from '../../components/auth/Field.jsx'
-import { signUp } from '../../lib/auth.js'
+import { landingPath, signUp } from '../../lib/auth.js'
 import { validateEmail, validateNewPassword, validatePasswordMatch } from '../../lib/validation.js'
 
 /* Everyone who signs up here gets a student account (the database default). */
@@ -32,7 +32,7 @@ export default function SignUp() {
     try {
       const { needsCode } = await signUp({ fullName: fullName.trim(), email: email.trim(), password })
       if (needsCode) navigate('/verify', { state: { email: email.trim(), type: 'signup' } })
-      else navigate('/portal', { replace: true })
+      else navigate(await landingPath(), { replace: true })
     } catch (error) {
       setFormError(error.message)
       setSubmitting(false)
