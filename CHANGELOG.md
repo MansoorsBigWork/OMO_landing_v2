@@ -1,5 +1,51 @@
 # Changelog
 
+## 25 September 2026: The Last Mile OMOship in the portal
+
+The first course, "The Last Mile: Inside the UK Delivery Network", now lives in this app under `/portal/omoships/uk-delivery-network`. It was built as a standalone Vite app (`OMO_delivery_network`) and has been folded in as `src/courses/`. Enrolments, progress and submissions are stored in Supabase.
+
+---
+
+### Before you deploy: required configuration
+
+- **Supabase:** paste [supabase/migrations/003_omoships.sql](supabase/migrations/003_omoships.sql) into SQL Editor and run it once. It is migration 003 from the database brief: `organisations` (and `employer_profiles.organisation_id`), `omoships`, `submissions`, the private `submissions` bucket, plus `enrolments` and `omoship_progress` for the course, and it seeds the first OMOship row. Until it has run, opening a course shows "We couldn't load your progress".
+  - Departures from the brief, so the first course works: `omoships.slug` (the course looks its row up by slug), `omoships.deadline` is nullable (null means 14 days from each student's enrolment), and `submissions.repo_url` alongside `project_path` because this course submits a GitHub repository rather than a file.
+  - Scores, feedback and status are not readable or writable from the browser on `submissions` (column grants). Students see results through the `submission_results` view once status is `released`; admins mark with `select mark_submission(id, project_score, video_score, project_feedback, video_feedback, 'released')`.
+- **Netlify:** nothing new to set. The Content Security Policy in `netlify.toml` now also allows `https://api.github.com`, which the submission form calls to check a repository exists.
+
+---
+
+### Where the course sits
+
+- **Routes** (`src/App.jsx`): `/portal` and `/portal/omoships/:slug/*` are nested under a new `RequireAuth` route (`src/components/RequireAuth.jsx`), which holds the sign-in check that used to live in `Portal.jsx`. Child routes read the user from the outlet context.
+- **Course mount:** `src/courses/CourseShell.tsx` loads the student's progress rows, then renders the course's own route tree. Course chunks are lazy: the landing page bundle is unchanged apart from the small course registry.
+- **Portal:** the student view's "OMOships" placeholder is now a card listing every registered course with its status (Not started, In progress, Submitted, Graded) and a button into it. `getCurrentUser` now returns the user's `id`.
+- **Scrolling:** the global scroll-to-top on navigation skips course paths, because the build page restores its own scroll position and the pathfinding task keeps the slide in the URL.
+
+### What changed in the course code
+
+- Moved from `OMO_delivery_network/src/{omoships,shared}` to `src/courses/`, with the stand-in dashboard (`dashboard/`, `App.tsx`, `main.tsx`), its `package.json`, config and nested git repository removed. Generator scripts moved to `scripts/`.
+- Imports switched from `react-router-dom` to `react-router` (the package this app already uses) and every course path gained the `/portal` prefix.
+- **Removed test elements:** the floating "Reset course" button, the "Reset course" entry in the sections sidebar (replaced by a "Back to your portal" link), the `?debug=1` playhead panel on the intro page and its playback-rate hook, and the "Week 1" placeholder page (the build page's Back link now goes to the course overview).
+- **Progress store** (`src/courses/shared/lib/progressStore.ts`) rewritten from localStorage to Supabase. Same function names, so the pages barely changed: reads come from an in-memory copy loaded once per course; writes are queued per key so they land in order. Enrolment and submission are awaited and show an error on failure. The enrol button used to POST to a `/api/enrolments` endpoint that did not exist.
+- **Submissions:** one per student per OMOship. The form waits for the row to save, shows "Your submission was not saved" if it did not, only allows resubmission while the status is `submitted`, and shows the total score and feedback once OMO releases them. Video links must now be Google Drive links, as the platform brief requires; the copy and the placeholder changed to match (YouTube and Loom were accepted before).
+- **Deadline:** the OMOship's `deadline` column when set, otherwise 14 days from enrolment, enforced in the database as well as the form.
+- **Styles:** the course's base stylesheet is scoped to a `.course` root instead of `body`, and restores browser default margins and bare `h1`/`header` styling inside it, because `landing.css` resets margins globally and styles the landing page's header and headline by element. The landing page's `.omoship` class (the orange word in the hero) is renamed `.omoship-word` so it does not collide with the course overview.
+
+### Tooling
+
+- `typescript`, `@types/react` and `@types/react-dom` added as dev dependencies with a root `tsconfig.json`; `npm run typecheck` passes. The Netlify build is still `vite build` and does not gate on types.
+- `d3-geo`, `d3-shape` and `topojson-client` added as dev dependencies for the map and city generators in `scripts/`.
+- `.gitignore` now also ignores `.DS_Store`, `tsconfig.tsbuildinfo` and the generator's cached `scripts/.countries-50m.json`.
+
+### Still to do
+
+1. An admin screen for marking: for now, staff call `mark_submission(...)` in Supabase's SQL Editor.
+2. A waitlist: `course.status` other than `open` disables the enrol button with the waitlist label, but nothing records interest.
+3. The submission form's video link is pattern-checked in the browser and by a database constraint only; nothing verifies the link opens.
+
+---
+
 ## 15 September 2026: React rebuild, privacy policy and sign-in portal
 
 The site was a single hand-written `index.html`. It is now a React 19 single-page app built with Vite. It has four parts: the landing page, a privacy policy, a sign-in portal backed by Supabase, and PostHog analytics with session replay. Security headers are set for the live site on Netlify.

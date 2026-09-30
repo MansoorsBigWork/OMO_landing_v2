@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router'
+import { Link, useOutletContext } from 'react-router'
 import logo from '../assets/omo-logo.png'
-import { getCurrentUser, onSignedOut, signOut } from '../lib/auth.js'
+import { coursePath, omoships } from '../courses/index.ts'
+import { loadCourseSummaries } from '../courses/shared/lib/progressStore.ts'
 import '../styles/portal.css'
 
 const ROLE_LABELS = { student: 'Student', employer: 'Employer', admin: 'Admin' }
 
 const INTROS = {
-  student: 'This is your OMO home. Finish your profile so employers can find you.',
+  student: 'This is your OMO home. Pick an OMOship to start, or carry on where you left off.',
   employer: 'Manage your company details and, once you’re verified, find students for your OMOships.',
   admin: 'Review employers waiting for approval and manage accounts.',
 }
@@ -59,52 +60,66 @@ function PlaceholderCard({ title, children }) {
   )
 }
 
-export default function Portal() {
-  const navigate = useNavigate()
-  const [user, setUser] = useState() // undefined while loading, null when signed out
-  const [loadError, setLoadError] = useState('')
+// What a student sees next to each course: where they are with it
+function courseStatus(summary) {
+  if (!summary?.enrolledAt) return { key: 'new', label: 'Not started' }
+  if (summary.submission?.status === 'released') return { key: 'graded', label: 'Results out' }
+  if (summary.submission) return { key: 'submitted', label: 'Submitted' }
+  return { key: 'active', label: 'In progress' }
+}
 
-  useEffect(() => {
-    document.title = 'Portal — OMO'
-  }, [])
+function OmoshipsCard({ userId }) {
+  const [summaries, setSummaries] = useState(null) // null while loading
+  const [error, setError] = useState('')
 
   useEffect(() => {
     let current = true
-    getCurrentUser()
+    loadCourseSummaries(userId)
       .then((found) => {
-        if (current) setUser(found)
+        if (current) setSummaries(found)
       })
-      .catch((error) => {
-        if (current) setLoadError(error.message)
+      .catch((err) => {
+        if (current) setError(err.message)
       })
     return () => {
       current = false
     }
+  }, [userId])
+
+  return (
+    <section className="portal-card">
+      <h2>OMOships</h2>
+      <ul className="portal-courses">
+        {omoships.map((course) => {
+          const summary = summaries?.[course.slug]
+          const status = summaries ? courseStatus(summary) : null
+          return (
+            <li key={course.slug}>
+              <div className="portal-course-text">
+                <strong>{course.title}</strong>
+                <span>{course.strapline}</span>
+              </div>
+              <div className="portal-course-actions">
+                {status && <span className={`portal-status is-${status.key}`}>{status.label}</span>}
+                <Link className="portal-btn portal-btn-primary" to={coursePath(course.slug)}>
+                  {summary?.enrolledAt ? 'Continue' : 'View OMOship'}
+                </Link>
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+      {error && <p className="portal-card-error">We couldn’t load your progress. {error}</p>}
+    </section>
+  )
+}
+
+export default function Portal() {
+  const { user, signOut } = useOutletContext()
+
+  useEffect(() => {
+    document.title = 'Portal — OMO'
   }, [])
-
-  // Leave if the session ends elsewhere (signed out in another tab, expired login)
-  useEffect(() => onSignedOut(() => navigate('/login', { replace: true })), [navigate])
-
-  async function handleSignOut() {
-    await signOut()
-    navigate('/login', { replace: true })
-  }
-
-  if (loadError) {
-    return (
-      <div className="portal">
-        <main className="portal-main">
-          <h1>Something went wrong</h1>
-          <p className="portal-intro">We couldn’t load your account. {loadError}</p>
-          <button type="button" className="portal-signout portal-error-action" onClick={handleSignOut}>
-            Sign out
-          </button>
-        </main>
-      </div>
-    )
-  }
-  if (user === undefined) return <div className="portal" aria-busy="true" />
-  if (user === null) return <Navigate to="/login" replace />
 
   const firstName = user.fullName?.trim().split(/\s+/)[0] || user.email
 
@@ -116,7 +131,7 @@ export default function Portal() {
         </Link>
         <div className="portal-user">
           <span className="portal-email">{user.email}</span>
-          <button type="button" className="portal-signout" onClick={handleSignOut}>Sign out</button>
+          <button type="button" className="portal-signout" onClick={signOut}>Sign out</button>
         </div>
       </header>
 
@@ -136,8 +151,8 @@ export default function Portal() {
         <div className="portal-grid">
           {user.role === 'student' && (
             <>
+              <OmoshipsCard userId={user.id} />
               <DetailsCard title="Your profile" fields={STUDENT_FIELDS} values={user.details} />
-              <PlaceholderCard title="OMOships">Live OMOships will appear here.</PlaceholderCard>
             </>
           )}
           {user.role === 'employer' && (
@@ -152,6 +167,9 @@ export default function Portal() {
             <>
               <PlaceholderCard title="Employer verification">
                 Employers waiting for approval will be listed here.
+              </PlaceholderCard>
+              <PlaceholderCard title="OMOship submissions">
+                Submissions are marked with the mark_submission function in Supabase for now. A review screen will appear here.
               </PlaceholderCard>
               <PlaceholderCard title="Accounts">Student and employer accounts will be listed here.</PlaceholderCard>
             </>

@@ -78,6 +78,34 @@
   font:inherit;font-size:14px;font-weight:600;cursor:not-allowed;
 }
 
+.portal-btn-primary{
+  display:inline-flex;align-items:center;margin-top:0;
+  background:var(--omo-orange);color:#fff;text-decoration:none;cursor:pointer;
+  transition:background .18s ease;
+}
+.portal-btn-primary:hover{background:#D9581A;}
+
+/* OMOships card: one row per course with where the student is with it */
+.portal-courses{list-style:none;margin:0;padding:0;}
+.portal-courses li{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;
+  padding:14px 0;border-top:1px solid rgba(27,33,64,0.07);
+}
+.portal-courses li:first-child{border-top:0;padding-top:0;}
+.portal-course-text{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 220px;}
+.portal-course-text strong{font-size:15px;line-height:1.35;}
+.portal-course-text span{font-size:13px;line-height:1.5;color:var(--portal-muted);}
+.portal-course-actions{display:flex;align-items:center;gap:12px;flex:0 0 auto;}
+.portal-status{
+  padding:4px 10px;border-radius:999px;
+  font-size:12px;font-weight:600;letter-spacing:.02em;
+  background:#ECE5DB;color:var(--portal-muted);
+}
+.portal-status.is-active{background:#FFF1E8;color:#B5490F;}
+.portal-status.is-submitted{background:#E3E7F5;color:#2B3A80;}
+.portal-status.is-graded{background:#E2F1E6;color:#1F6B3A;}
+.portal-card-error{margin-top:14px;font-size:13px;line-height:1.5;color:#9A3412;}
+
 .portal-error-action{margin-top:20px;}
 
 @media (max-width:520px){

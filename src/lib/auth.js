@@ -120,6 +120,7 @@ export async function getCurrentUser() {
   const details = table ? await run(supabase.from(table).select(columns).eq('id', user.id).maybeSingle()) : null
 
   return {
+    id: user.id,
     email: profile.email ?? user.email,
     fullName: profile.full_name ?? '',
     role: profile.role,

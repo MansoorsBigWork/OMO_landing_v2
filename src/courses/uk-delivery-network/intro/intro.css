@@ -1,0 +1,571 @@
+/* Intro page styles. Every colour is an OMO token or a derived tint.
+   The stage and reading column share the canvas with no divider. */
+
+.shell-main:has(.intro-page) {
+  max-width: 1440px;
+  padding: 0;
+}
+
+.intro-page {
+  /* Map palette, derived from the OMO tokens (Map Stage Brief A.2):
+     water is blue at 12% over canvas, bathymetry steps 12/8/4%, land is
+     a muted sage with two contour greens, urban grey, cream roads and a
+     pale warm motorway yellow. */
+  --map-water: #D3DBEE;
+  --map-bathy-1: #DBE1F0;
+  --map-bathy-2: #E4E8F3;
+  --map-bathy-3: #EDF0F8;
+  --map-land: #C9D2B4;
+  --map-contour: #B4BF9C;
+  --map-contour-2: #A7B390;
+  --map-urban: #E4E3DF;
+  --map-road: #F5F3EC;
+  --map-motorway: #F2EBC8;
+  --map-motorway-edge: #E3DBB0;
+  --map-coast: #F8F6F0;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--omo-canvas);
+}
+
+/* Right column: the stage. Sticky, never scrolls, only animates. */
+.intro-stage-col {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.intro-stage-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+/* The stage panel: the fixed map composition on its water ground, with a
+   soft rounded left edge so it reads as one surface of the page. */
+.map-stage-panel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--map-water);
+  border-radius: 40px 0 0 40px;
+}
+
+.map-stage-fit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: top left;
+}
+
+/* Left column: the reading column */
+.intro-reading {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+}
+
+.intro-reading-inner {
+  padding: 2rem 4rem 5rem 1rem;
+  min-width: 0;
+}
+
+.intro-back {
+  margin: 0 0 2rem;
+  font-size: 0.9375rem;
+}
+
+.intro-title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.01em;
+}
+
+.intro-section {
+  min-height: 88vh;
+  padding: 3.5rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.intro-section h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.intro-section p {
+  margin: 0 0 1.125rem;
+  max-width: 58ch;
+  font-size: 1.0313rem;
+  line-height: 1.65;
+}
+
+/* The final section is short and leads straight into the closing
+   stats and the Start button, so it drops the viewport-height centring
+   the scroll-driven sections need. */
+.intro-section:last-of-type {
+  min-height: 0;
+  justify-content: flex-start;
+  padding-bottom: 0.5rem;
+}
+
+/* Progress rail */
+.progress-rail {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-rail ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.rail-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  padding: 0;
+  border-radius: 0.3125rem;
+  border: 2px solid var(--omo-ash-soft);
+  background: var(--omo-canvas);
+  color: var(--omo-ash);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.rail-dot.is-answered {
+  background: var(--omo-ash-soft);
+  color: var(--omo-canvas);
+}
+
+.rail-dot.is-current {
+  border-color: var(--omo-blue);
+}
+
+.rail-dot.is-current.is-answered {
+  background: var(--omo-blue);
+}
+
+.rail-dot:hover {
+  border-color: var(--omo-blue);
+}
+
+/* The final box marks the finish: amber with a canvas tick */
+.rail-dot.is-finish,
+.rail-dot.is-finish.is-answered,
+.rail-dot.is-finish:hover {
+  background: var(--omo-amber);
+  border-color: var(--omo-amber);
+  color: var(--omo-canvas);
+}
+
+.rail-dot.is-finish svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+.rail-dot.is-finish.is-current {
+  box-shadow: 0 0 0 2px var(--omo-canvas), 0 0 0 4px var(--omo-blue);
+}
+
+/* Inline glossary terms */
+.term {
+  position: relative;
+  display: inline-block;
+}
+
+.term-button {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline dotted var(--omo-blue) 1.5px;
+  text-underline-offset: 0.2em;
+}
+
+.term-pop {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  /* --pop-shift, set on the term when it opens, keeps the bubble
+     inside the viewport when the term sits near an edge */
+  transform: translateX(calc(-50% + var(--pop-shift, 0px)));
+  width: max-content;
+  max-width: min(18rem, calc(100vw - 2rem));
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--omo-canvas);
+  border: 1px solid var(--omo-canvas-shade);
+  box-shadow: 0 6px 18px rgba(51, 51, 51, 0.14);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--omo-ash);
+  display: none;
+  z-index: 5;
+}
+
+.term-pop strong {
+  display: block;
+  margin-bottom: 0.125rem;
+}
+
+.term:hover .term-pop,
+.term:focus-within .term-pop,
+.term.is-open .term-pop {
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .term-pop {
+    position: fixed;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    top: auto;
+    transform: none;
+    width: auto;
+    max-width: none;
+    box-shadow: 0 10px 28px rgba(51, 51, 51, 0.22);
+  }
+}
+
+/* Questions */
+.question {
+  margin: 1.75rem 0 0;
+  padding: 1.25rem 1.375rem 1.375rem;
+  border: 1px solid var(--omo-canvas-shade);
+  border-radius: 0.75rem;
+  max-width: 34rem;
+}
+
+.question legend {
+  font-weight: 600;
+  padding: 0 0.25rem;
+  line-height: 1.4;
+}
+
+.question-number {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--omo-ash-soft);
+  margin-bottom: 0.25rem;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.875rem;
+}
+
+.q-option {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  padding: 0.5625rem 0.75rem;
+  border: 1.5px solid var(--omo-canvas-shade);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  line-height: 1.45;
+}
+
+.q-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.q-option:has(input:focus-visible) {
+  outline: 2px solid var(--omo-blue);
+  outline-offset: 2px;
+}
+
+.question:not([data-answered]) .q-option:hover {
+  border-color: var(--omo-ash-soft);
+}
+
+.q-option.is-chosen {
+  border-color: var(--omo-amber);
+  outline: 1px solid var(--omo-amber);
+}
+
+.q-option.is-correct {
+  background: var(--omo-blue-tint);
+}
+
+.question[data-answered] .q-option {
+  cursor: default;
+}
+
+.q-letter {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--omo-ash-soft);
+}
+
+.q-reveal {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.question[data-answered] .q-reveal {
+  grid-template-rows: 1fr;
+}
+
+.q-reveal > * {
+  overflow: hidden;
+}
+
+.q-explanation {
+  margin: 0.875rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--omo-ash);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .q-reveal {
+    transition: none;
+  }
+}
+
+/* Flashcards */
+.flashcards {
+  margin-top: 1.75rem;
+}
+
+.flashcards-heading {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--omo-ash-soft);
+}
+
+.flashcards-hint {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--omo-ash-soft);
+}
+
+.flashcards-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  gap: 0.75rem;
+}
+
+.flashcard {
+  display: block;
+  width: 100%;
+  height: 11rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  perspective: 1000px;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  border-radius: 0.75rem;
+}
+
+.flashcard-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 400ms cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.flashcard-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.875rem;
+  border: 1.5px solid var(--omo-canvas-shade);
+  border-radius: 0.75rem;
+  background: var(--omo-canvas);
+  backface-visibility: hidden;
+}
+
+.flashcard-front {
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--omo-ash);
+}
+
+.flashcard-term {
+  font-weight: 700;
+  margin-bottom: 0.375rem;
+}
+
+.flashcard:hover .flashcard-face {
+  border-color: var(--omo-ash-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flashcard-inner {
+    transition: none;
+    transform: none;
+  }
+  .flashcard-inner.is-flipped {
+    transform: none;
+  }
+  .flashcard-face {
+    transition: opacity 250ms ease;
+  }
+  .flashcard-inner.is-flipped .flashcard-front,
+  .flashcard-inner:not(.is-flipped) .flashcard-back {
+    opacity: 0;
+  }
+  .flashcard-back {
+    transform: none;
+  }
+}
+
+/* Closing stats, readable without the stage */
+.closing-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  margin: 0 0 2.5rem;
+  background: var(--omo-canvas-shade);
+  border-top: 1px solid var(--omo-canvas-shade);
+  border-bottom: 1px solid var(--omo-canvas-shade);
+}
+
+.closing-stats > div {
+  background: var(--omo-canvas);
+  padding: 1rem 1rem 1rem 0.75rem;
+}
+
+.closing-stats dt {
+  font-size: 0.8125rem;
+  color: var(--omo-ash-soft);
+}
+
+.closing-stats dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.intro-footer {
+  padding-bottom: 3rem;
+}
+
+/* Tablet and phone: the stage becomes a sticky band on top */
+@media (max-width: 1024px) {
+  .intro-page {
+    display: block;
+  }
+
+  .intro-stage-col {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: var(--omo-canvas);
+  }
+
+  .intro-stage-sticky {
+    position: static;
+    height: 40vh;
+  }
+
+  .map-stage-panel {
+    border-radius: 0 0 24px 24px;
+  }
+
+  .intro-reading {
+    display: block;
+  }
+
+  .progress-rail {
+    position: sticky;
+    top: 40vh;
+    z-index: 3;
+    height: auto;
+    padding: 0.5rem 0;
+    background: var(--omo-canvas);
+  }
+
+  .progress-rail ul {
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .rail-dot {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.625rem;
+  }
+
+  .intro-reading-inner {
+    padding: 1.5rem 1.5rem 4rem;
+  }
+
+  .intro-section {
+    min-height: 55vh;
+    scroll-margin-top: calc(40vh + 3.5rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .intro-stage-sticky {
+    height: 34vh;
+  }
+
+  .progress-rail {
+    top: 34vh;
+  }
+
+  .intro-section {
+    scroll-margin-top: calc(34vh + 3.5rem);
+  }
+}

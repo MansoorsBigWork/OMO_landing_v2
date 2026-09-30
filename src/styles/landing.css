@@ -105,8 +105,8 @@
     letter-spacing:-0.025em;
     color:var(--carbon);
   }
-  .subhead .omoship{position:relative;white-space:nowrap;color:var(--omo-orange);}
-  .subhead .omoship::after{
+  .subhead .omoship-word{position:relative;white-space:nowrap;color:var(--omo-orange);}
+  .subhead .omoship-word::after{
     content:"";position:absolute;left:0;right:0;bottom:.04em;height:.12em;
     background:var(--omo-orange);opacity:.28;
   }
