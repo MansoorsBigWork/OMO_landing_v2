@@ -129,7 +129,7 @@ export default function OmoshipTile({ course, status, enrolled }) {
             {commitment && <li>{commitment}</li>}
             <li>Remote</li>
           </ul>
-          <Link className="otile-cta" to={coursePath(course.slug)}>
+          <Link className="otile-cta" to={enrolled ? `${coursePath(course.slug)}/continue` : coursePath(course.slug)}>
             {cta}
             <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
               <path d="M3 8h9M8.5 4.5L12 8l-3.5 3.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />

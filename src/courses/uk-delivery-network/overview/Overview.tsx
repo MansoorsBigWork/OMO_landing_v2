@@ -3,7 +3,8 @@ import { useNavigate } from "react-router";
 import Button from "../../shared/components/Button";
 import CvPreview from "./CvPreview";
 import { ukDeliveryNetwork as course } from "../course";
-import { hasSeenWelcome, isEnrolled, recordEnrolment } from "../../shared/lib/progressStore";
+import { isEnrolled, recordEnrolment } from "../../shared/lib/progressStore";
+import { resumePath } from "../resume";
 import "./overview.css";
 
 /* Course page for The Last Mile OMOship. Five sections: header, stat strip,
@@ -12,10 +13,6 @@ import "./overview.css";
 
 type EnrolState = "idle" | "loading" | "error";
 
-const INTRO_ROUTE = `/portal/omoships/${course.slug}/intro`;
-const WELCOME_ROUTE = `/portal/omoships/${course.slug}/welcome`;
-const nextRoute = () => (hasSeenWelcome(course.slug) ? INTRO_ROUTE : WELCOME_ROUTE);
-
 function useEnrolment() {
   const navigate = useNavigate();
   const [enrolled, setEnrolled] = useState(() => isEnrolled(course.slug));
@@ -23,7 +20,7 @@ function useEnrolment() {
 
   const submit = useCallback(async () => {
     if (enrolled) {
-      navigate(nextRoute());
+      navigate(resumePath()); // the furthest stage reached
       return;
     }
     setState("loading");
@@ -31,7 +28,7 @@ function useEnrolment() {
       /* Waits for the enrolment row: the student must know if it failed */
       await recordEnrolment(course.slug);
       setEnrolled(true);
-      navigate(nextRoute());
+      navigate(resumePath());
     } catch {
       setState("error");
     }
