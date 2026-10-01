@@ -8,7 +8,7 @@ The onboarding and dashboard work (`omoship_tile_design`) is merged into `omoshi
 - **The map tile is the dashboard tile.** `/omoships` renders `OmoshipTile` for every course in the registry, with its status pill from the enrolment and submission rows. The stylised route card and its progress ring are gone from live courses; coming-soon teasers are unchanged.
 - **Profile page** at `/profile`, reached from "Profile" in the account menu. The editor now writes the onboarding columns (`subject_name`, `first_name` alongside `full_name`) and uses the shared LinkedIn normaliser, and keeps the CV upload, which onboarding does not collect. `getCurrentUser` reads `bio` again.
 - The `/portal` text corruption from the tile branch is fixed.
-- **Still outstanding:** migration 002 (onboarding columns and `complete_student_onboarding`) is not in `supabase/migrations/`; sign-in fails for every role until it has been applied. The onboarding search data holds ten sample rows each; `src/data/universities.js` and `degree-subjects.js` hold the full lists the profile page uses.
+- **Database state, checked 1 October 2026 against the project's API:** migrations 002 (onboarding columns, `complete_student_onboarding`) and 003 (OMOship tables, `submission_results`, bucket) are both applied, and the anon role is denied on every table and the function. Migration 002's SQL is still not in `supabase/migrations/`, so the repo does not fully describe the schema. The onboarding search data holds ten sample rows each; `src/data/universities.js` and `degree-subjects.js` hold the full lists the profile page uses.
 
 ---
 
