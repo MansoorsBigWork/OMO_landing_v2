@@ -1,0 +1,44 @@
+[
+  {
+    "id": "Message1",
+    "start": 0,
+    "end": 1.75,
+    "notes": "AI is ok to use, then the second line with think in Amber"
+  },
+  {
+    "id": "WalkOn",
+    "start": 1.75,
+    "end": 3.75,
+    "notes": "Bolt walks in from the left, 12 steps, stops centre stage and turns to face you"
+  },
+  {
+    "id": "Thinking",
+    "start": 3.75,
+    "end": 6.5,
+    "notes": "Thought bubble fills with question marks; eye narrows, screw loosens, aerial glows and the body shakes"
+  },
+  {
+    "id": "PreBurst",
+    "start": 6.5,
+    "end": 6.88,
+    "notes": "Eye shuts, Bolt inflates and holds; the bubble pops"
+  },
+  {
+    "id": "Burst",
+    "start": 6.88,
+    "end": 8.26,
+    "notes": "Bolt bursts into machine parts that fly, bounce once and settle on the floor"
+  },
+  {
+    "id": "Message2",
+    "start": 8.26,
+    "end": 10.26,
+    "notes": "Message 1 fades out; if there is anything the world needs right now, it is creativity"
+  },
+  {
+    "id": "Continue",
+    "start": 10.26,
+    "end": 12.76,
+    "notes": "Continue rises in and takes focus; the scene holds and the eye blinks"
+  }
+]

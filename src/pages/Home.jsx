@@ -132,7 +132,7 @@ export default function Home() {
       <main className="hero" ref={heroRef}>
         <section className="left">
           <h1>No<br />Summer<br />Internship?</h1>
-          <p className="subhead">Get an <span className="omoship">OMOship</span> instead.</p>
+          <p className="subhead">Get an <span className="omoship-word">OMOship</span> instead.</p>
 
           <div className="cta-row">
             <Link className="cta" to="/portal">

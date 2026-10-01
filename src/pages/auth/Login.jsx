@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import AuthLayout from '../../components/auth/AuthLayout.jsx'
 import Field from '../../components/auth/Field.jsx'
-import { resendCode, signIn } from '../../lib/auth.js'
+import { landingPath, resendCode, signIn } from '../../lib/auth.js'
 import { validateEmail } from '../../lib/validation.js'
 
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
     setSubmitting(true)
     try {
       await signIn({ email: email.trim(), password })
-      navigate('/portal', { replace: true })
+      navigate(await landingPath(), { replace: true })
     } catch (error) {
       if (error.code === 'email_not_confirmed') {
         // Signed up but never entered the code: send a fresh one and pick up where they left off

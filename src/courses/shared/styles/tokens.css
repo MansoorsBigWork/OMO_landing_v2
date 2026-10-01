@@ -1,0 +1,19 @@
+/* OMO global design tokens. Locked brand palette; every colour on any page
+   must resolve to one of these tokens or a tint or shade derived from them. */
+:root {
+  /* Brand colours */
+  --omo-amber: #E8650A;   /* Primary action colour. One accent per section. */
+  --omo-blue: #0A33A5;    /* Links, focus rings, secondary emphasis. */
+  --omo-canvas: #F8F6F0;  /* Page and card background. */
+  --omo-ash: #333333;     /* All body text and headings. */
+
+  /* Derived tints and shades (no new hues) */
+  --omo-amber-shade: #C4550A;      /* Hover state for amber actions */
+  --omo-ash-soft: #5C5C5C;         /* Secondary text, 4.5:1+ on canvas */
+  --omo-canvas-shade: #EDEAE0;     /* Subtle borders and dividers */
+  --omo-blue-tint: #DBDFE7;        /* 12% blue over canvas; chips, correct answers */
+
+  /* Type */
+  --omo-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}

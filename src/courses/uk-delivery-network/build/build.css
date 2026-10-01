@@ -1,0 +1,823 @@
+/* The build page: the pathfinding panel's dark grammar as a full page.
+   No omo-blue anywhere here; sky carries links and focus, amber the
+   section numbers and primary buttons, canvas only on amber fills. */
+
+.shell-main:has(.build-page) {
+  max-width: none;
+  padding: 0;
+}
+
+.build-page {
+  --dk-bg: #1E1E1E;
+  --dk-surface: #252526;
+  --dk-raised: #2D2D30;
+  --dk-border: #3C3C3C;
+  --dk-text: #D4D4D4;
+  --dk-muted: #9A9A9A;
+  --dk-sky: #8FA7FF;
+  --dk-amber: #E8650A;
+
+  background: var(--dk-bg);
+  color: var(--dk-text);
+  min-height: 100vh;
+}
+
+.build-page *:focus-visible {
+  outline: 2px solid var(--dk-sky);
+  outline-offset: 2px;
+}
+
+.build-page a {
+  color: var(--dk-sky);
+}
+
+.bp-muted {
+  color: var(--dk-muted);
+}
+
+.bp-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  /* The left padding clears the course ribbon hanging at left 1rem */
+  padding: 0.75rem 1.5rem 0.75rem 4.5rem;
+  border-bottom: 1px solid var(--dk-border);
+  position: sticky;
+  top: var(--portal-bar-h, 0px);
+  background: var(--dk-bg);
+  z-index: 10;
+}
+
+.bp-title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.bp-chip {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--dk-border);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--dk-muted);
+}
+
+.bp-columns {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 820px);
+  gap: 3rem;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+}
+
+/* Sticky section nav */
+.bp-nav {
+  position: sticky;
+  top: 4.5rem;
+  align-self: start;
+}
+
+.bp-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bp-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.625rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--dk-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.bp-nav a:hover {
+  color: var(--dk-text);
+  background: var(--dk-raised);
+}
+
+.bp-nav a.is-current {
+  color: var(--dk-sky);
+  background: var(--dk-raised);
+}
+
+.bp-nav-tick {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--dk-sky);
+  flex: none;
+}
+
+/* Sections */
+.bp-section {
+  background: var(--dk-surface);
+  border: 1px solid var(--dk-border);
+  border-radius: 14px;
+  padding: 1.75rem 2rem 1.5rem;
+  margin-bottom: 2rem;
+  scroll-margin-top: 4.5rem;
+  opacity: 0;
+  transform: translateY(0.75rem);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+
+.bp-section.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.bp-section h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  font-size: 1.375rem;
+  color: var(--dk-text);
+}
+
+.bp-num {
+  color: var(--dk-amber);
+  font-variant-numeric: tabular-nums;
+}
+
+.bp-section h3 {
+  margin: 1.75rem 0 0.75rem;
+  font-size: 1.0625rem;
+}
+
+.bp-section h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.9375rem;
+}
+
+.bp-section p {
+  margin: 0 0 0.875rem;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+.bp-term {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.bp-markread {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--dk-border);
+  border-radius: 999px;
+  background: none;
+  color: var(--dk-muted);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bp-markread:hover {
+  color: var(--dk-text);
+  border-color: var(--dk-muted);
+}
+
+.bp-markread.is-read {
+  color: var(--dk-sky);
+  border-color: var(--dk-sky);
+}
+
+.bp-markread svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* Checklist */
+.bp-checklist {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bp-check-item label {
+  display: flex;
+  gap: 0.75rem;
+  cursor: pointer;
+  align-items: flex-start;
+}
+
+.bp-check-item input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.bp-check-box {
+  pointer-events: none;
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.125rem;
+  border: 1.5px solid var(--dk-border);
+  border-radius: 0.375rem;
+  color: var(--dk-sky);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bp-check-item input:checked + .bp-check-box {
+  border-color: var(--dk-sky);
+}
+
+.bp-check-item input:focus-visible + .bp-check-box {
+  outline: 2px solid var(--dk-sky);
+  outline-offset: 2px;
+}
+
+.bp-check-box svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.bp-check-body {
+  line-height: 1.55;
+}
+
+.bp-check-body .bp-code {
+  margin-top: 0.5rem;
+  max-width: 22rem;
+}
+
+/* Code blocks: the editor treatment */
+.bp-code {
+  position: relative;
+  background: var(--dk-bg);
+  border: 1px solid var(--dk-border);
+  border-radius: 10px;
+  margin: 0 0 0.875rem;
+}
+
+.bp-code pre {
+  margin: 0;
+  padding: 0.75rem 5.5rem 0.75rem 1rem;
+  overflow-x: auto;
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--dk-text);
+}
+
+.bp-code-label {
+  position: absolute;
+  top: -0.55rem;
+  left: 0.875rem;
+  padding: 0 0.375rem;
+  background: var(--dk-surface);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: var(--dk-muted);
+}
+
+.bp-copy {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--dk-border);
+  border-radius: 0.375rem;
+  background: var(--dk-surface);
+  color: var(--dk-muted);
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bp-copy:hover {
+  color: var(--dk-text);
+}
+
+.bp-copy svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  color: var(--dk-sky);
+}
+
+/* Memo */
+.bp-memo {
+  margin: 0 0 1rem;
+  padding: 1.25rem 1.5rem;
+  border-left: 1px solid var(--dk-amber);
+  background: var(--dk-bg);
+  border-radius: 0 10px 10px 0;
+}
+
+.bp-memo-from {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  color: var(--dk-muted);
+}
+
+/* Tables */
+.bp-table-wrap {
+  overflow-x: auto;
+  margin: 0 0 0.875rem;
+}
+
+.bp-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.bp-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--dk-muted);
+  padding: 0.375rem 0.875rem 0.375rem 0;
+  border-bottom: 1px solid var(--dk-border);
+}
+
+.bp-table td {
+  padding: 0.5rem 0.875rem 0.5rem 0;
+  border-bottom: 1px solid var(--dk-border);
+  vertical-align: top;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Repo card */
+.bp-repo-card {
+  border: 1px solid var(--dk-border);
+  border-radius: 12px;
+  background: var(--dk-bg);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bp-repo-name {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.bp-tagpill {
+  font-size: 0.75rem;
+  border: 1px solid var(--dk-border);
+  border-radius: 999px;
+  padding: 0.125rem 0.5rem;
+  color: var(--dk-muted);
+  margin-left: 0.375rem;
+}
+
+.bp-repo-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0.875rem 0;
+  flex-wrap: wrap;
+}
+
+.bp-btn-primary,
+.build-page a.bp-btn-primary {
+  color: #F8F6F0;
+}
+
+.bp-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  padding: 0 1.25rem;
+  border: none;
+  border-radius: 0.625rem;
+  background: var(--dk-amber);
+  color: #F8F6F0;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.bp-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.bp-btn-primary:disabled {
+  opacity: 0.6;
+}
+
+.bp-figure {
+  margin: 0 0 1rem;
+}
+
+.bp-figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--dk-border);
+}
+
+.bp-figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* File tree */
+.bp-tree {
+  border: 1px solid var(--dk-border);
+  border-radius: 12px;
+  background: var(--dk-bg);
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bp-tree ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bp-tree-group {
+  margin-left: 0.8rem !important;
+  border-left: 1px solid var(--dk-border);
+  padding-left: 0.5rem !important;
+}
+
+.bp-tree-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.5rem;
+  cursor: default;
+  min-width: 0;
+}
+
+.bp-tree-row:hover,
+.bp-tree-row.is-selected {
+  background: var(--dk-raised);
+}
+
+.bp-tree-caret {
+  width: 0.75rem;
+  flex: none;
+  color: var(--dk-muted);
+}
+
+.bp-tree-caret svg {
+  width: 0.625rem;
+  height: 0.625rem;
+  display: block;
+  transition: transform 150ms ease;
+}
+
+.bp-tree-name {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.bp-tag {
+  flex: none;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  padding: 0.06rem 0.45rem;
+}
+
+.bp-tag.is-edit {
+  color: var(--dk-amber);
+  border: 1px solid var(--dk-amber);
+}
+
+.bp-tag.is-readonly {
+  color: var(--dk-muted);
+  border: 1px solid var(--dk-border);
+}
+
+.bp-tree-desc {
+  font-size: 0.75rem;
+  color: var(--dk-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.bp-tree-row:hover .bp-tree-desc,
+.bp-tree-row:focus-visible .bp-tree-desc,
+.bp-tree-row.is-selected .bp-tree-desc {
+  opacity: 1;
+}
+
+/* Sim files and function cards */
+.bp-simfiles {
+  margin: 0 0 0.5rem;
+}
+
+.bp-simfiles div {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--dk-border);
+}
+
+.bp-simfiles dt {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+}
+
+.bp-simfiles dd {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--dk-muted);
+}
+
+.bp-functions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.bp-function {
+  border: 1px solid var(--dk-border);
+  border-radius: 12px;
+  background: var(--dk-bg);
+  padding: 1.125rem 1.375rem;
+}
+
+.bp-function h4 code {
+  font-size: 1rem;
+  color: var(--dk-amber);
+}
+
+.bp-function dl {
+  margin: 0 0 0.625rem;
+}
+
+.bp-function dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--dk-muted);
+  margin-top: 0.5rem;
+}
+
+.bp-function dd {
+  margin: 0.125rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.bp-prompts {
+  margin: 0;
+  padding-left: 1.125rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--dk-sky);
+}
+
+.bp-prompts li {
+  margin-bottom: 0.375rem;
+}
+
+/* Callouts */
+.bp-callout {
+  border: 1px solid var(--dk-border);
+  border-radius: 12px;
+  background: var(--dk-bg);
+  padding: 1.125rem 1.375rem;
+  margin: 0 0 0.875rem;
+}
+
+.bp-callout h4 {
+  margin: 0 0 0.5rem;
+}
+
+.bp-callout ul {
+  margin: 0;
+  padding-left: 1.125rem;
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+.bp-callout li {
+  margin-bottom: 0.375rem;
+}
+
+.bp-callout.is-ai {
+  border-color: var(--dk-amber);
+}
+
+/* Steps and lists */
+.bp-steps,
+.bp-plain-list {
+  margin: 0 0 0.875rem;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+
+.bp-steps li,
+.bp-plain-list li {
+  margin-bottom: 0.375rem;
+}
+
+/* Submission form */
+.bp-form {
+  border: 1px solid var(--dk-border);
+  border-radius: 12px;
+  background: var(--dk-bg);
+  padding: 1.375rem 1.5rem;
+  max-width: 34rem;
+}
+
+.bp-form-deadline {
+  font-size: 0.875rem;
+  color: var(--dk-muted);
+}
+
+.bp-form-deadline strong {
+  color: var(--dk-amber);
+}
+
+.bp-field {
+  margin-bottom: 1rem;
+}
+
+.bp-field label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 0.375rem;
+}
+
+.bp-field input[type="url"] {
+  width: 100%;
+  box-sizing: border-box;
+  height: 2.625rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--dk-border);
+  border-radius: 0.5rem;
+  background: var(--dk-surface);
+  color: var(--dk-text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+}
+
+.bp-field input[type="url"]::placeholder {
+  color: var(--dk-muted);
+}
+
+.bp-field input[aria-invalid="true"] {
+  border-color: var(--dk-amber);
+}
+
+.bp-ownwork {
+  display: flex !important;
+  gap: 0.625rem;
+  align-items: flex-start;
+  font-weight: 400 !important;
+  font-size: 0.9375rem !important;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.bp-ownwork input {
+  margin-top: 0.25rem;
+  accent-color: var(--dk-sky);
+}
+
+.bp-error {
+  margin: 0.375rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--dk-amber);
+}
+
+.bp-form-done h4 {
+  margin: 0 0 0.625rem;
+}
+
+.bp-done-links {
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+.bp-link {
+  border: none;
+  background: none;
+  color: var(--dk-sky);
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0;
+  cursor: pointer;
+}
+
+.bp-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* Mobile */
+@media (max-width: 1024px) {
+  .bp-columns {
+    display: block;
+    padding: 1rem 1rem 4rem;
+  }
+
+  .bp-nav {
+    position: sticky;
+    top: 3.1rem;
+    background: var(--dk-bg);
+    z-index: 9;
+    margin: 0 -1rem 1rem;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--dk-border);
+    overflow-x: auto;
+  }
+
+  .bp-nav ul {
+    flex-direction: row;
+    gap: 0.5rem;
+    width: max-content;
+  }
+
+  .bp-nav a {
+    white-space: nowrap;
+  }
+
+  .bp-section {
+    padding: 1.25rem 1.125rem 1.125rem;
+  }
+
+  .bp-simfiles div {
+    grid-template-columns: 1fr;
+    gap: 0.125rem;
+  }
+
+  .bp-tree-row {
+    flex-wrap: wrap;
+  }
+
+  .bp-tree-desc {
+    display: none;
+  }
+
+  .bp-tree-row:focus-visible .bp-tree-desc,
+  .bp-tree-row.is-selected .bp-tree-desc {
+    display: block;
+    flex-basis: 100%;
+    white-space: normal;
+    opacity: 1;
+  }
+}
+
+/* Grading, shown in place of the "you will hear back" line once OMO has marked the work */
+.bp-feedback {
+  margin-top: 1rem;
+  padding: 1rem 1.125rem;
+  border-left: 3px solid var(--dk-amber);
+  background: var(--dk-raised);
+}
+
+.bp-feedback h4 {
+  margin: 0 0 0.5rem;
+}
+
+.bp-feedback p {
+  margin: 0.25rem 0 0;
+  white-space: pre-line;
+}
