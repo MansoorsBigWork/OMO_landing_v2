@@ -1,7 +1,9 @@
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import type { IntroQuestion } from "../data";
 import { introCopy } from "../data";
-import type { AnswerRecord } from "../../../shared/lib/progressStore";
+import { studentSeed, type AnswerRecord } from "../../../shared/lib/progressStore";
+import { seededShuffle } from "../../../shared/lib/shuffle";
+import { ukDeliveryNetwork as course } from "../../course";
 
 /* One question per section. Radio behaviour restyled from the 21st.dev
    Question Tool starting point to OMO tokens: selection answers at once,
@@ -21,6 +23,11 @@ const LETTERS = ["A", "B", "C", "D"];
 export default function Question({ question, number, answer, onAnswer }: QuestionProps) {
   const name = useId();
   const answered = answer !== undefined;
+  /* Shuffled per student and question, so the right answer is not always in the same slot */
+  const options = useMemo(
+    () => seededShuffle(question.options, `${studentSeed(course.slug)}:${question.id}`),
+    [question],
+  );
 
   return (
     <fieldset className="question" data-answered={answered || undefined}>
@@ -31,7 +38,7 @@ export default function Question({ question, number, answer, onAnswer }: Questio
         {question.prompt}
       </legend>
       <div className="question-options">
-        {question.options.map((opt, i) => {
+        {options.map((opt, i) => {
           const chosen = answer?.chosen === opt.id;
           const correct = opt.id === question.correctId;
           const cls = [

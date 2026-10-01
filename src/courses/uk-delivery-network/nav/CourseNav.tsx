@@ -119,6 +119,10 @@ export default function CourseNav() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open, close]);
 
+  /* Before enrolling there is nothing to navigate: the overview stands alone */
+  const overviewPath = navStages[0].path.replace("{slug}", course.slug);
+  if (location.pathname === overviewPath && !isEnrolled(course.slug)) return null;
+
   /* Progress is read fresh on every render while open, so the list
      always reflects the stored state. */
   const done = navStages.map((s) => doneChecks[s.id](course.slug));

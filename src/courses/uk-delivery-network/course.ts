@@ -17,27 +17,27 @@ export const ukDeliveryNetwork: Omoship = {
   ],
   description: [
     "Every day the UK moves tens of millions of parcels through a network most people never see: sortation hubs, line-haul trunking, regional depots, and the final drive to the doorstep. The last mile is the most expensive and least predictable part of that journey, and it is where the best operators earn their margin.",
-    "In this OMOship you will access the experience of work remotely inside a delivery network. You will be handed a depot’s real-shaped data, a service level that is being missed, and a brief from the operations team. You will diagnose where the network is losing time and money, model two alternative fixes, and present a recommendation the depot manager could act on next Monday.",
+    "In this OMOship you will access the experience of work remotely inside a delivery network. You will follow one parcel through the real UK network, learn how a van finds its way through a city, then take a brief from the operations team at Kestrel Parcels: replace their hand-made delivery plan with an algorithm that decides which van takes which parcel, the roads between stops, and what to do when a road closes or an order arrives late.",
     "Your submissions are graded by OMO against the partner’s own criteria. Strong performers are shortlisted to the partner’s early careers team.",
   ],
   weeksHeading: "What you will do",
   weeks: [
     {
       label: "Part 1",
-      title: "Diagnose",
+      title: "Learn the network",
       tasks: [
-        "Map the flow of a parcel from inbound trunk to doorstep and identify the four handover points where delay is introduced",
-        "Analyse a week of depot data (route counts, failed deliveries, stem times, driver utilisation) and quantify the cost of the missed service level",
-        "Submit a one-page diagnosis with the single largest driver of lost time named and evidenced",
+        "Follow a parcel from an order in Sheffield through a fulfilment centre, two depots, the night trunk and the national hub to the doorstep, answering a question at each stage",
+        "Watch five pathfinding algorithms search a city map, explain each one step by step, and sort their strengths and weaknesses",
       ],
     },
     {
       label: "Part 2",
-      title: "Fix and recommend",
+      title: "Build the planner",
       tasks: [
-        "Model two interventions (for example: route re-sequencing, out-of-home pickup points, a revised cut-off time) and estimate the effect of each on cost per parcel and on-time rate",
-        "Write a recommendation memo for the depot manager, no longer than two pages",
-        "Record a five-minute presentation of the recommendation",
+        "Take a brief from Kestrel Parcels, a delivery company whose vans are planned by hand: parcels delivered late, two vans on the same street an hour apart, drivers finding out about a closed bridge when they reach it",
+        "Get a working code project from us on GitHub. It recreates a day of deliveries across a city, with the planning part left for you to write: which van takes which parcel, in what order, by which roads, and what to do when a road closes or an order arrives late",
+        "Run your plan against realistic days, including the bad ones, and watch your score: parcels delivered on time first, then kilometres driven",
+        "Submit a link to your finished GitHub repository and a Google Drive link to a two-minute video of you talking through what you built",
       ],
     },
   ],

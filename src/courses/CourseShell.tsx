@@ -3,6 +3,7 @@ import { Link, Navigate, useOutletContext, useParams } from "react-router";
 import { RouteTransitionProvider } from "./shared/components/RouteTransition";
 import { clearProgress, loadProgress } from "./shared/lib/progressStore";
 import { findOmoship } from "./index";
+import PortalBar from "../components/PortalBar.jsx";
 import "./shared/styles/app.css";
 
 /* Mounts one course at /portal/omoships/:slug/*. It sits inside
@@ -11,7 +12,8 @@ import "./shared/styles/app.css";
    the pages can read them synchronously. */
 
 interface PortalContext {
-  user: { id: string };
+  user: { id: string; email: string };
+  signOut: () => void;
 }
 
 const shellCopy = {
@@ -23,7 +25,7 @@ const shellCopy = {
 
 export default function CourseShell() {
   const { slug = "" } = useParams();
-  const { user } = useOutletContext<PortalContext>();
+  const { user, signOut } = useOutletContext<PortalContext>();
   const entry = findOmoship(slug);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [detail, setDetail] = useState("");
@@ -56,6 +58,7 @@ export default function CourseShell() {
   return (
     <RouteTransitionProvider>
       <div className="course" aria-busy={status === "loading" || undefined}>
+        <PortalBar user={user} onSignOut={signOut} />
         <a className="skip-link" href="#main">
           {shellCopy.skip}
         </a>

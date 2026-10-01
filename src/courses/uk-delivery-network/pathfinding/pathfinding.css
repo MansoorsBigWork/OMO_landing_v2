@@ -219,7 +219,7 @@
 .pathfinding-page {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 3.4rem);
+  height: calc(100vh - var(--portal-bar-h, 0px));
   overflow: hidden;
 }
 
@@ -235,10 +235,6 @@
 
 .task-title {
   font-weight: 600;
-  font-size: 0.9375rem;
-}
-
-.task-header a {
   font-size: 0.9375rem;
 }
 

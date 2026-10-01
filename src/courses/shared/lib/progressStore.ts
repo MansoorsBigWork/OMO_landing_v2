@@ -201,6 +201,11 @@ function write(slug: string, key: string, value: unknown): void {
   });
 }
 
+/* The signed-in student's id, used to seed per-student option orders */
+export function studentSeed(slug: string): string {
+  return current(slug)?.uid ?? "";
+}
+
 /* ---- Enrolment ---- */
 
 export function isEnrolled(slug: string): boolean {

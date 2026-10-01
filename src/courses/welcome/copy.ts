@@ -76,7 +76,6 @@ export const welcomeCopy = {
     start: "Start the course",
     dotLabel: "Go to slide {n}: {title}",
     liveRegion: "Slide {n} of {total}: {title}",
-    sidebarLink: "What you’ll get out of this",
     carouselLabel: "What you’ll get out of this OMOship",
   },
 } as const;

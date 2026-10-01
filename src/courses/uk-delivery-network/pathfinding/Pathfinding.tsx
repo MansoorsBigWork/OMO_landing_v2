@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import Simulation from "./Simulation";
 import DarkPanel, { type Phase } from "./DarkPanel";
 import Explain from "./Explain";
@@ -192,7 +192,6 @@ export default function Pathfinding() {
     <div className="pathfinding-page">
       <header className="task-header">
         <span className="task-title">{taskCopy.header}</span>
-        <Link to={`/portal/omoships/${course.slug}/intro`}>{taskCopy.backLink}</Link>
         <span className="task-progress" aria-live="polite">
           {taskCopy.progressTemplate.replace("{n}", String(index + 1)).replace("{total}", String(slides.length))}
         </span>

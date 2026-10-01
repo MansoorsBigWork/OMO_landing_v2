@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import Button from "../../shared/components/Button";
+import CvPreview from "./CvPreview";
 import { ukDeliveryNetwork as course } from "../course";
-import { welcomeCopy } from "../../welcome/copy";
-import { interludeCopy } from "../../ai-interlude/copy";
 import { hasSeenWelcome, isEnrolled, recordEnrolment } from "../../shared/lib/progressStore";
 import "./overview.css";
 
@@ -140,14 +139,10 @@ export default function UkDeliveryNetwork() {
       </section>
 
       <section className="enrol-block" aria-label={course.enrol.buttonLabel}>
-        <EnrolButton enrolled={enrolled} state={state} onEnrol={submit} errorId="enrol-error-block" />
-        {enrolled && (
-          <p className="welcome-reread">
-            <Link to={`/portal/omoships/${course.slug}/welcome`}>{welcomeCopy.ui.sidebarLink}</Link>
-            <span aria-hidden="true"> · </span>
-            <Link to={`/portal/omoships/${course.slug}/week-1/interlude`}>{interludeCopy.replayLink}</Link>
-          </p>
-        )}
+        <div className="enrol-row">
+          <EnrolButton enrolled={enrolled} state={state} onEnrol={submit} errorId="enrol-error-block" />
+          <CvPreview />
+        </div>
       </section>
     </article>
   );

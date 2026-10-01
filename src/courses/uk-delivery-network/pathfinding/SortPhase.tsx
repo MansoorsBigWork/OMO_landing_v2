@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   taskCopy,
   type AlgorithmSlide,
   type Statement,
   type StatementKind,
 } from "./data";
-import type { SlideTaskState } from "../../shared/lib/progressStore";
+import { studentSeed, type SlideTaskState } from "../../shared/lib/progressStore";
+import { seededShuffle } from "../../shared/lib/shuffle";
+import { ukDeliveryNetwork as course } from "../course";
 
 /* The Sort phase (Brief 4 v2, Part 7): one statement at a time, three
    decisions, undo, then a review board with three checks. The deck's
@@ -34,7 +36,12 @@ interface Mark {
 }
 
 export default function SortPhase({ slide, state, onState, onChecked, isLast, onNext }: SortPhaseProps) {
-  const statements = slide.statements;
+  /* Shuffled per student and slide, and stable across reloads, so the
+     decided count still points at the right next statement */
+  const statements = useMemo(
+    () => seededShuffle(slide.statements, `${studentSeed(course.slug)}:${slide.id}`),
+    [slide],
+  );
   const decidedCount = state.decidedOrder.length;
   const inReview = decidedCount >= statements.length;
   const current = statements[decidedCount];

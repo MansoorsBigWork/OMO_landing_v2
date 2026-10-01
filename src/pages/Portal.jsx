@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useOutletContext } from 'react-router'
-import logo from '../assets/omo-logo.png'
+import { useOutletContext } from 'react-router'
+import PortalBar from '../components/PortalBar.jsx'
+import StudentProfileCard from '../components/StudentProfileCard.jsx'
+import OmoshipTile from '../components/OmoshipTile.jsx'
 import { coursePath, omoships } from '../courses/index.ts'
 import { loadCourseSummaries } from '../courses/shared/lib/progressStore.ts'
 import '../styles/portal.css'
@@ -13,15 +15,7 @@ const INTROS = {
   admin: 'Review employers waiting for approval and manage accounts.',
 }
 
-// [column in Supabase, label, optional display format]
-const STUDENT_FIELDS = [
-  ['university', 'University'],
-  ['course', 'Course'],
-  ['graduation_year', 'Graduation year'],
-  ['bio', 'Bio'],
-  ['linkedin_url', 'LinkedIn'],
-  ['cv_path', 'CV', () => 'Uploaded'],
-]
+// [column in Supabase, label]
 const EMPLOYER_FIELDS = [
   ['company_name', 'Company name'],
   ['website', 'Website'],
@@ -33,15 +27,13 @@ function DetailsCard({ title, fields, values }) {
     <section className="portal-card">
       <h2>{title}</h2>
       <dl className="portal-details">
-        {fields.map(([key, label, format]) => {
+        {fields.map(([key, label]) => {
           const value = values[key]
           const hasValue = value !== null && value !== undefined && value !== ''
           return (
             <div key={key}>
               <dt>{label}</dt>
-              <dd className={hasValue ? undefined : 'is-empty'}>
-                {hasValue ? (format ? format(value) : value) : 'Not added yet'}
-              </dd>
+              <dd className={hasValue ? undefined : 'is-empty'}>{hasValue ? value : 'Not added yet'}</dd>
             </div>
           )
         })}
@@ -68,7 +60,7 @@ function courseStatus(summary) {
   return { key: 'active', label: 'In progress' }
 }
 
-function OmoshipsCard({ userId }) {
+function OmoshipTiles({ userId }) {
   const [summaries, setSummaries] = useState(null) // null while loading
   const [error, setError] = useState('')
 
@@ -87,35 +79,26 @@ function OmoshipsCard({ userId }) {
   }, [userId])
 
   return (
-    <section className="portal-card">
-      <h2>OMOships</h2>
-      <ul className="portal-courses">
-        {omoships.map((course) => {
-          const summary = summaries?.[course.slug]
-          const status = summaries ? courseStatus(summary) : null
-          return (
-            <li key={course.slug}>
-              <div className="portal-course-text">
-                <strong>{course.title}</strong>
-                <span>{course.strapline}</span>
-              </div>
-              <div className="portal-course-actions">
-                {status && <span className={`portal-status is-${status.key}`}>{status.label}</span>}
-                <Link className="portal-btn portal-btn-primary" to={coursePath(course.slug)}>
-                  {summary?.enrolledAt ? 'Continue' : 'View OMOship'}
-                </Link>
-              </div>
-            </li>
-          )
-        })}
-      </ul>
+    <section className="portal-tiles" aria-labelledby="portal-omoships">
+      <h2 id="portal-omoships" className="portal-vh">OMOships</h2>
+      {omoships.map((course) => {
+        const summary = summaries?.[course.slug]
+        return (
+          <OmoshipTile
+            key={course.slug}
+            course={course}
+            status={summaries ? courseStatus(summary) : null}
+            enrolled={Boolean(summary?.enrolledAt)}
+          />
+        )
+      })}
       {error && <p className="portal-card-error">We couldn’t load your progress. {error}</p>}
     </section>
   )
 }
 
 export default function Portal() {
-  const { user, signOut } = useOutletContext()
+  const { user, signOut, updateUser } = useOutletContext()
 
   useEffect(() => {
     document.title = 'Portal — OMO'
@@ -125,15 +108,7 @@ export default function Portal() {
 
   return (
     <div className="portal">
-      <header className="portal-header">
-        <Link to="/">
-          <img className="portal-logo" src={logo} alt="OMO" />
-        </Link>
-        <div className="portal-user">
-          <span className="portal-email">{user.email}</span>
-          <button type="button" className="portal-signout" onClick={signOut}>Sign out</button>
-        </div>
-      </header>
+      <PortalBar user={user} onSignOut={signOut} homeTo="/" />
 
       <main className="portal-main">
         <span className="portal-tag">{`// ${ROLE_LABELS[user.role] ?? 'OMO'} portal`}</span>
@@ -151,8 +126,8 @@ export default function Portal() {
         <div className="portal-grid">
           {user.role === 'student' && (
             <>
-              <OmoshipsCard userId={user.id} />
-              <DetailsCard title="Your profile" fields={STUDENT_FIELDS} values={user.details} />
+              <OmoshipTiles userId={user.id} />
+              <StudentProfileCard user={user} onSaved={updateUser} />
             </>
           )}
           {user.role === 'employer' && (

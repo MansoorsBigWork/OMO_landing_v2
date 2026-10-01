@@ -1,0 +1,138 @@
+/* ---------- OMOship tile (student portal) ---------- */
+/* Map palette: the intro stage's values, so the tile is a true window onto the course */
+.otile{
+  --map-water:#D3DBEE;--map-bathy-1:#DBE1F0;--map-bathy-2:#E4E8F3;--map-bathy-3:#EDF0F8;
+  --map-land:#C9D2B4;--map-contour:#B4BF9C;--map-contour-2:#A7B390;
+  --map-motorway:#F2EBC8;--map-motorway-edge:#E3DBB0;--map-coast:#F8F6F0;
+  position:relative;display:flex;flex-direction:column;
+  border-radius:18px;overflow:hidden;
+  background:#fff;border:1px solid rgba(27,33,64,0.06);
+  box-shadow:0 1px 2px rgba(27,33,64,0.05),0 14px 32px -18px rgba(27,33,64,0.22);
+  transition:box-shadow .3s ease;
+}
+.otile:hover{box-shadow:0 2px 4px rgba(27,33,64,0.05),0 28px 56px -24px rgba(27,33,64,0.32);}
+.otile:focus-within{outline:2px solid var(--omo-orange);outline-offset:3px;}
+.otile:focus-within .otile-cta:focus-visible{outline:none;}
+
+/* The map window */
+.otile-map{
+  position:relative;aspect-ratio:5/4;overflow:hidden;
+  background:var(--map-water);
+}
+.otile-map svg{position:absolute;inset:0;width:100%;height:100%;display:block;}
+
+.ot-bathy{fill:none;stroke-linejoin:round;}
+.ot-bathy-1{stroke:var(--map-bathy-1);stroke-width:44;}
+.ot-bathy-2{stroke:var(--map-bathy-2);stroke-width:28;}
+.ot-bathy-3{stroke:var(--map-bathy-3);stroke-width:13;}
+.ot-land{fill:var(--map-land);}
+.ot-land-ie{opacity:.5;}
+.ot-hill{fill:var(--map-contour);}
+.ot-hill-2{fill:var(--map-contour-2);}
+.ot-motorway-edge{fill:none;stroke:var(--map-motorway-edge);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;}
+.ot-motorway{fill:none;stroke:var(--map-motorway);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
+.ot-coast{fill:none;stroke:var(--map-coast);stroke-width:1.5;}
+.ot-coast-ie{opacity:.6;}
+
+.ot-depot circle{fill:#fff;stroke:var(--portal-navy,#1B2140);stroke-width:1.6;}
+.ot-depot.is-named circle{stroke-width:2;}
+.ot-depot text{
+  font-family:'Archivo','Space Grotesk',sans-serif;font-size:9.5px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;fill:var(--portal-navy,#1B2140);
+  paint-order:stroke;stroke:var(--map-coast);stroke-width:3px;stroke-linejoin:round;
+}
+
+/* Trunk routes: hidden until hover, then drawn end to end */
+.ot-route{
+  fill:none;stroke:var(--portal-navy,#1B2140);stroke-width:2.2;stroke-linecap:round;
+  stroke-dasharray:1;stroke-dashoffset:1;opacity:0;
+  transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1),opacity .2s ease;
+}
+.ot-route-2{transition-delay:.5s;}
+
+/* The parcel: amber marker riding the route (SMIL animateMotion, started from the tile) */
+.ot-parcel{opacity:0;transition:opacity .25s ease .3s;}
+.ot-parcel circle{fill:var(--omo-orange);stroke:#fff;stroke-width:2.2;filter:drop-shadow(0 1.5px 2.5px rgba(27,33,64,.4));}
+
+/* The hub's idle pulse: one authored moment while the tile rests */
+.ot-pulse{fill:none;stroke:var(--omo-orange);stroke-width:1.5;opacity:0;transform-box:fill-box;transform-origin:center;}
+
+/* Glare sweep (react-bits GlareHover) */
+.ot-glare{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(-55deg,rgba(255,255,255,0) 58%,rgba(255,255,255,.55) 70%,rgba(255,255,255,0) 78%);
+  background-size:260% 260%;background-repeat:no-repeat;background-position:-120% -120%;
+  mix-blend-mode:soft-light;
+  transition:background-position .7s ease;
+}
+
+.otile-status{
+  position:absolute;left:14px;top:14px;
+  padding:5px 10px;border-radius:999px;
+  background:rgba(255,255,255,.9);color:var(--portal-muted);
+  font-size:12px;font-weight:600;letter-spacing:.02em;
+  box-shadow:0 1px 2px rgba(27,33,64,.08),0 4px 12px -6px rgba(27,33,64,.2);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.otile-status.is-active{color:#B5490F;}
+.otile-status.is-submitted{color:#2B3A80;}
+.otile-status.is-graded{color:#1F6B3A;}
+
+/* Body */
+.otile-body{padding:20px 22px 22px;}
+.otile-title{
+  font-family:var(--display,'Archivo Black','Archivo',sans-serif);font-weight:400;
+  font-size:21px;line-height:1.18;letter-spacing:-0.005em;text-wrap:balance;
+  color:var(--portal-navy,#1B2140);margin:0 0 6px;
+}
+.otile-strap{margin:0;font-size:14px;line-height:1.5;color:var(--portal-muted);}
+.otile-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px;margin-top:18px;}
+.otile-meta{display:flex;flex-wrap:wrap;gap:4px 0;list-style:none;margin:0;padding:0;font-size:13px;font-weight:600;color:var(--portal-navy,#1B2140);}
+.otile-meta li{display:flex;align-items:center;}
+.otile-meta li + li::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--omo-orange);margin:0 9px;}
+
+.otile-cta{
+  position:static;display:inline-flex;align-items:center;gap:8px;
+  height:40px;padding:0 16px 0 18px;border-radius:8px;
+  background:var(--omo-orange);color:#fff;text-decoration:none;
+  font-size:14px;font-weight:600;
+  transition:background .18s ease;
+}
+.otile-cta svg{transition:transform .25s cubic-bezier(.22,1,.36,1);}
+.otile-cta:hover{background:#D9581A;}
+.otile:hover .otile-cta svg{transform:translateX(3px);}
+/* Whole tile is the link; one tab stop */
+.otile-cta::after{content:'';position:absolute;inset:0;border-radius:18px;}
+
+/* Hover: pointer devices only */
+@media (hover:hover){
+  .otile:hover .ot-route{stroke-dashoffset:0;opacity:.85;}
+  .otile:hover .ot-glare{background-position:120% 120%;}
+  .otile:hover .ot-parcel{opacity:1;}
+}
+/* Touch: the routes are simply there */
+@media (hover:none){
+  .ot-route{stroke-dashoffset:0;opacity:.85;transition:none;}
+}
+
+@keyframes ot-pulse{
+  0%{transform:scale(.6);opacity:.9}
+  70%{opacity:0}
+  100%{transform:scale(3.4);opacity:0}
+}
+.ot-pulse{animation:ot-pulse 3s cubic-bezier(.2,.7,.3,1) infinite;}
+.ot-pulse-2{animation-delay:1.5s;}
+
+@media (prefers-reduced-motion:reduce){
+  .ot-pulse{animation:none;opacity:.5;transform:scale(1.6);}
+  .ot-route,.otile:hover .ot-route{stroke-dashoffset:0;opacity:.85;transition:none;}
+  .ot-parcel{opacity:1;transition:none;transform:translate(562px,706px);} /* rests at Sheffield, in map units */
+  .ot-glare,.otile:hover .ot-glare{transition:none;background-position:-120% -120%;}
+  .otile-cta svg,.otile:hover .otile-cta svg{transition:none;transform:none;}
+}
+
+@media (max-width:520px){
+  .otile-map{aspect-ratio:4/3;}
+  .otile-body{padding:18px 18px 20px;}
+  .otile-title{font-size:19px;}
+}

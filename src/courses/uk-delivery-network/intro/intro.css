@@ -37,8 +37,8 @@
 
 .intro-stage-sticky {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: var(--portal-bar-h, 0px);
+  height: calc(100vh - var(--portal-bar-h, 0px));
 }
 
 /* The stage panel: the fixed map composition on its water ground, with a
@@ -70,11 +70,6 @@
 .intro-reading-inner {
   padding: 2rem 4rem 5rem 1rem;
   min-width: 0;
-}
-
-.intro-back {
-  margin: 0 0 2rem;
-  font-size: 0.9375rem;
 }
 
 .intro-title {
@@ -507,7 +502,7 @@
 
   .intro-stage-col {
     position: sticky;
-    top: 0;
+    top: var(--portal-bar-h, 0px);
     z-index: 3;
     background: var(--omo-canvas);
   }
@@ -527,7 +522,7 @@
 
   .progress-rail {
     position: sticky;
-    top: 40vh;
+    top: calc(40vh + var(--portal-bar-h, 0px));
     z-index: 3;
     height: auto;
     padding: 0.5rem 0;

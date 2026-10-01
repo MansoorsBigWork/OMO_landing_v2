@@ -7,7 +7,7 @@
 }
 
 .welcome-page {
-  min-height: calc(100vh - 3.5rem);
+  min-height: calc(100vh - var(--portal-bar-h, 0px));
   display: flex;
   flex-direction: column;
   background: var(--omo-canvas);
@@ -389,11 +389,6 @@
   clip-path: inset(50%);
   white-space: nowrap;
   margin: 0;
-}
-
-.welcome-reread {
-  margin: 0.75rem 0 0;
-  font-size: 0.9375rem;
 }
 
 /* Mobile */

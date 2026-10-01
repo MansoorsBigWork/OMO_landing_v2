@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type PropsWithChildren } from "react";
-import { Link, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import {
   aiBox,
   buildCopy,
@@ -158,7 +158,6 @@ export default function Build() {
     <div className="build-page">
       <header className="bp-header">
         <span className="bp-title">{buildCopy.header}</span>
-        <Link to={`/portal/omoships/${course.slug}`}>{buildCopy.backLink}</Link>
         <StatusChip label={status} />
       </header>
 

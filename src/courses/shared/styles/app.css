@@ -9,6 +9,7 @@
    losing to every class rule in the course's own files. */
 
 .course {
+  --portal-bar-h: 56px; /* the signed-in top bar above every course page */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -96,7 +97,8 @@
 }
 
 .skip-link:focus-visible {
-  top: 0.5rem;
+  top: calc(var(--portal-bar-h) + 0.5rem);
+  z-index: 125;
 }
 
 /* Route transition (react-bits PixelTransition port): a staggered grid

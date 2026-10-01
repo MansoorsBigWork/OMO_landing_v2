@@ -5,7 +5,7 @@ import '../styles/portal.css'
 
 /* Wraps every signed-in route. Loads the user once, sends visitors to /login,
    and leaves when the session ends elsewhere (signed out in another tab, expired login).
-   Child routes read { user, signOut } from useOutletContext(). */
+   Child routes read { user, signOut, updateUser } from useOutletContext(). */
 export default function RequireAuth() {
   const navigate = useNavigate()
   const [user, setUser] = useState() // undefined while loading, null when signed out
@@ -48,5 +48,8 @@ export default function RequireAuth() {
   if (user === undefined) return <div className="portal" aria-busy="true" />
   if (user === null) return <Navigate to="/login" replace />
 
-  return <Outlet context={{ user, signOut: handleSignOut }} />
+  // Children merge saved changes in, so the portal reflects a profile edit without a reload
+  const updateUser = (patch) => setUser((current) => ({ ...current, ...patch }))
+
+  return <Outlet context={{ user, signOut: handleSignOut, updateUser }} />
 }

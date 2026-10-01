@@ -1,5 +1,23 @@
 # Changelog
 
+## 1 October 2026: portal tile, top bar, profile editing and course polish
+
+### Portal
+
+- **OMOship tile** (`src/components/OmoshipTile.jsx`): the student view's course list is now one tile per course, a window onto the course's own UK map with title, sector, hours, status and the way in. The hub pulses idle; on hover the trunk routes draw on and a parcel rides them (ports of react-bits GlareHover; the TiltedCard tilt was tried and removed).
+- **Top bar everywhere signed in** (`src/components/PortalBar.jsx`): the portal header is a shared component and now stays on every course page. The course ribbon hangs from its bottom rule, and the course's sticky and full-screen parts (intro stage, build header, interlude) sit below it.
+- **Profile editing is live** (`src/components/StudentProfileCard.jsx`, `src/lib/profile.js`). Name, university, course and graduation year are required; bio, LinkedIn and CV are optional and marked Recommended, with a note that verified employers can see the profile. University and course are selects preloaded with UK universities (`src/data/universities.js`) and common degree subjects (`src/data/degree-subjects.js`), each with an Other option that opens a text box. The CV is a PDF up to 5 MB uploaded to the private `cvs` bucket at `<user_id>/<filename>`; only that path is stored in `student_profiles.cv_path`, one file per student (the previous file is deleted on replace), and it opens through a 60-second signed URL. No schema change: migration 001's tables, policies and bucket already cover it.
+- `RequireAuth` now passes `updateUser` through the outlet context so a saved profile shows without a reload.
+
+### Course
+
+- Removed the "Back" links from the intro, pathfinding and build pages, and the two replay links on the overview; the sections ribbon is the way around. The ribbon is hidden on the overview until the student enrols.
+- Intro question options and pathfinding sort statements are shuffled per student (`src/courses/shared/lib/shuffle.ts`, seeded by student id plus question or slide id, so the order is stable across reloads).
+- The overview's description and "What you will do" now describe the course as built, in plain terms: the parcel's journey and the five algorithms, then the Kestrel Parcels brief, the code project, the scored test days, and the GitHub plus two-minute Drive video submission.
+- **CV preview** on the overview (`overview/CvPreview.tsx`, copy in `overview/cv.ts`): "See this on your CV" opens two ready-to-paste CV entries, one for software roles and one for data roles, each with a copy button.
+
+---
+
 ## 25 September 2026: The Last Mile OMOship in the portal
 
 The first course, "The Last Mile: Inside the UK Delivery Network", now lives in this app under `/portal/omoships/uk-delivery-network`. It was built as a standalone Vite app (`OMO_delivery_network`) and has been folded in as `src/courses/`. Enrolments, progress and submissions are stored in Supabase.
@@ -19,7 +37,7 @@ The first course, "The Last Mile: Inside the UK Delivery Network", now lives in 
 
 - **Routes** (`src/App.jsx`): `/portal` and `/portal/omoships/:slug/*` are nested under a new `RequireAuth` route (`src/components/RequireAuth.jsx`), which holds the sign-in check that used to live in `Portal.jsx`. Child routes read the user from the outlet context.
 - **Course mount:** `src/courses/CourseShell.tsx` loads the student's progress rows, then renders the course's own route tree. Course chunks are lazy: the landing page bundle is unchanged apart from the small course registry.
-- **Portal:** the student view's "OMOships" placeholder is now a card listing every registered course with its status (Not started, In progress, Submitted, Graded) and a button into it. `getCurrentUser` now returns the user's `id`.
+- **Portal:** the student view's "OMOships" placeholder is now one tile per registered course (`src/components/OmoshipTile.jsx`): a window onto the course's own UK map (the intro stage's geography, cropped to the Midlands and the North) with the title, sector, time commitment, the student's status (Not started, In progress, Submitted, Results out) and the way in. Idle, the national hub pulses; on hover the tile tilts toward the cursor, a glare crosses the map, the trunk routes draw on and a parcel rides them (dependency-free ports of react-bits TiltedCard and GlareHover). Reduced motion and touch get the finished map with no tilt. `getCurrentUser` now returns the user's `id`.
 - **Scrolling:** the global scroll-to-top on navigation skips course paths, because the build page restores its own scroll position and the pathfinding task keeps the slide in the URL.
 
 ### What changed in the course code

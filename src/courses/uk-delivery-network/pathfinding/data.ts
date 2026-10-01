@@ -38,7 +38,6 @@ export const transitionCopy = {
 
 export const taskCopy = {
   header: "Task 1 · Pathfinding",
-  backLink: "Back to intro",
   progressTemplate: "{n} of {total}",
   play: "Play",
   pause: "Pause",

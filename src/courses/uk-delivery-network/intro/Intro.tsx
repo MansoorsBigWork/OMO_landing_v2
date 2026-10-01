@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router";
 import Button from "../../shared/components/Button";
 import Stage from "./stage/Stage";
 import { usePlayheadController } from "./stage/usePlayhead";
@@ -67,9 +66,6 @@ export default function Intro() {
       <div className="intro-reading" ref={readingRef}>
         <ProgressRail currentIndex={currentIndex} answeredIds={answeredIds} />
         <div className="intro-reading-inner">
-          <p className="intro-back">
-            <Link to={`/portal/omoships/${course.slug}`}>{introCopy.backLink}</Link>
-          </p>
           <h1 className="intro-title">{introCopy.pageTitle}</h1>
 
           {sections.map((section, i) => (

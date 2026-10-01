@@ -336,7 +336,6 @@ export const closingStats: ReadonlyArray<{ value: string; label: string }> = [
 
 export const introCopy = {
   pageTitle: "How the UK delivery network works",
-  backLink: "Back to the OMOship",
   railLabel: "Intro sections",
   stageLabel:
     "Animated map of the UK following one parcel from an order in Sheffield, south to a Milton Keynes warehouse, through depots, an overnight trunk and the national hub, and back to a Sheffield doorstep.",

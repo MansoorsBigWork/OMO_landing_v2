@@ -28,6 +28,5 @@ export const interludeCopy = {
     "A small robot walks on, tries to think too hard, and comes apart into gears and springs.",
   announce1: "AI is ok to use. But don’t let it think for you.",
   announce2: "If there is anything the world needs right now, it’s creativity.",
-  replayLink: "Replay: a word about AI",
   briefPlaceholder: "Project brief opens next",
 } as const;

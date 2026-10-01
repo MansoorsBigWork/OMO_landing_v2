@@ -24,7 +24,6 @@ export const starter = {
 
 export const buildCopy = {
   header: "Build · The Last Mile",
-  backLink: "Back",
   status: {
     notStarted: "Not started",
     inProgress: "In progress",

@@ -9,13 +9,19 @@
   color:var(--portal-navy);
 }
 
-/* overrides the landing page's fixed site header */
-.portal-header{
-  position:sticky;
-  padding:14px var(--safe);
+/* The signed-in top bar (PortalBar.jsx). Self-contained so it reads the same
+   on the portal and inside a course, where the site's bare header rules are reverted. */
+.portal-bar{
+  --portal-bar-h:56px;
+  position:sticky;top:0;z-index:110;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  height:var(--portal-bar-h);padding:0 var(--safe);box-sizing:border-box;margin:0;
   background:rgba(246,241,235,0.88);
+  backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
   border-bottom:1px solid rgba(27,33,64,0.08);
+  font-family:'Archivo','Space Grotesk',sans-serif;color:#1B2140;
 }
+.portal-bar-home{display:flex;align-items:center;}
 .portal-logo{display:block;height:24px;width:auto;}
 .portal-user{display:flex;align-items:center;gap:16px;min-width:0;}
 .portal-email{font-size:14px;color:var(--portal-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -71,39 +77,81 @@
 .portal-details div:first-child{border-top:0;padding-top:0;}
 .portal-details dt{font-weight:600;}
 .portal-details dd{text-align:right;color:var(--portal-muted);overflow-wrap:anywhere;}
+.portal-details dd a{color:var(--portal-navy);text-decoration:underline;text-underline-offset:.2em;}
+.portal-details dd a:hover{color:var(--omo-orange);}
 .portal-details dd.is-empty{color:#A7A29B;font-style:italic;}
 .portal-btn{
+  display:inline-flex;align-items:center;justify-content:center;
   margin-top:18px;height:40px;padding:0 16px;border:0;border-radius:6px;
-  background:#ECE5DB;color:var(--portal-muted);
-  font:inherit;font-size:14px;font-weight:600;cursor:not-allowed;
-}
-
-.portal-btn-primary{
-  display:inline-flex;align-items:center;margin-top:0;
-  background:var(--omo-orange);color:#fff;text-decoration:none;cursor:pointer;
+  background:#ECE5DB;color:var(--portal-navy);
+  font:inherit;font-size:14px;font-weight:600;cursor:pointer;
   transition:background .18s ease;
 }
-.portal-btn-primary:hover{background:#D9581A;}
+.portal-btn:hover:not(:disabled){background:#E2D9CC;}
+.portal-btn:disabled{color:var(--portal-muted);cursor:not-allowed;}
+.portal-btn-primary{background:var(--omo-orange);color:#fff;}
+.portal-btn-primary:hover:not(:disabled){background:#D9581A;}
+.portal-btn:focus-visible{outline:2px solid var(--omo-orange);outline-offset:2px;}
 
-/* OMOships card: one row per course with where the student is with it */
-.portal-courses{list-style:none;margin:0;padding:0;}
-.portal-courses li{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 20px;
-  padding:14px 0;border-top:1px solid rgba(27,33,64,0.07);
+/* ---------- Student profile card ---------- */
+.pf-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;}
+.pf-head h2{margin-bottom:0;}
+.pf-head .portal-btn{margin-top:0;height:36px;}
+.pf-note{margin:0 0 14px;font-size:13px;line-height:1.5;color:var(--portal-muted);}
+.pf-note.is-warning{color:#B5490F;}
+.pf-saved{margin:0 0 12px;font-size:13px;font-weight:600;color:#1F6B3A;}
+.pf-tag{
+  display:inline-block;margin-left:8px;padding:2px 7px;border-radius:999px;vertical-align:1px;
+  font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  background:#FFF1E8;color:#B5490F;
 }
-.portal-courses li:first-child{border-top:0;padding-top:0;}
-.portal-course-text{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 220px;}
-.portal-course-text strong{font-size:15px;line-height:1.35;}
-.portal-course-text span{font-size:13px;line-height:1.5;color:var(--portal-muted);}
-.portal-course-actions{display:flex;align-items:center;gap:12px;flex:0 0 auto;}
-.portal-status{
-  padding:4px 10px;border-radius:999px;
-  font-size:12px;font-weight:600;letter-spacing:.02em;
-  background:#ECE5DB;color:var(--portal-muted);
+.portal-details dt .pf-tag{font-weight:700;}
+.pf-link{
+  padding:0;border:0;background:none;font:inherit;font-size:inherit;
+  color:var(--portal-navy);text-decoration:underline;text-underline-offset:.2em;cursor:pointer;
 }
-.portal-status.is-active{background:#FFF1E8;color:#B5490F;}
-.portal-status.is-submitted{background:#E3E7F5;color:#2B3A80;}
-.portal-status.is-graded{background:#E2F1E6;color:#1F6B3A;}
+.pf-link:hover{color:var(--omo-orange);}
+
+.pf-form{display:flex;flex-direction:column;gap:16px;}
+.pf-field{display:flex;flex-direction:column;gap:6px;min-width:0;}
+.pf-label-row{display:flex;align-items:baseline;gap:4px;}
+.pf-field label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--portal-navy);}
+.pf-field input,.pf-field select,.pf-field textarea{
+  width:100%;min-height:44px;padding:10px 12px;
+  font:inherit;font-size:15px;color:var(--portal-navy);
+  background:#fff;border:1px solid #CFC8BD;border-radius:6px;
+  transition:border-color .15s ease,box-shadow .15s ease;
+}
+.pf-field select{
+  appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6.5l4 4 4-4' fill='none' stroke='%231B2140' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:16px;
+}
+.pf-field textarea{resize:vertical;line-height:1.5;}
+.pf-field input::placeholder,.pf-field textarea::placeholder{color:#A7A29B;}
+.pf-field input:focus,.pf-field select:focus,.pf-field textarea:focus{
+  outline:none;border-color:var(--portal-navy);box-shadow:0 0 0 3px rgba(27,33,64,0.12);
+}
+.pf-field [aria-invalid="true"]{border-color:#B42318;}
+.pf-other{margin-top:2px;}
+.pf-hint{margin:0;font-size:12px;color:var(--portal-muted);text-align:right;font-variant-numeric:tabular-nums;}
+.pf-error{margin:0;font-size:13px;line-height:1.4;color:#B42318;}
+.pf-form-error{margin:0;padding:10px 12px;border-radius:6px;background:#FDECE6;font-size:13px;line-height:1.4;color:#B42318;}
+.pf-divider{
+  margin:6px 0 0;padding-top:16px;border-top:1px solid rgba(27,33,64,0.08);
+  font-size:13px;line-height:1.5;color:var(--portal-muted);
+}
+.pf-cv{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;}
+.pf-cv .portal-btn{margin-top:0;height:38px;}
+.pf-file{position:absolute;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;}
+.pf-cv-name{font-size:14px;color:var(--portal-navy);overflow-wrap:anywhere;}
+.pf-cv-name.is-muted{color:var(--portal-muted);font-style:italic;}
+.pf-actions{display:flex;flex-wrap:wrap;gap:10px;padding-top:6px;}
+.pf-actions .portal-btn{margin-top:0;}
+
+/* OMOship tiles (see omoship-tile.css); the heading is for assistive tech only */
+.portal-tiles{display:flex;flex-direction:column;gap:20px;min-width:0;}
+.portal-vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 .portal-card-error{margin-top:14px;font-size:13px;line-height:1.5;color:#9A3412;}
 
 .portal-error-action{margin-top:20px;}

@@ -3,13 +3,12 @@
    (the interlude stage is z-index 90) but below the amber and blue
    route moments at 150 and 200. */
 
-/* The ribbon rests tucked 0.375rem above the viewport edge and slides
-   down on hover, so it extends without animating layout properties.
-   The dashboard's own bar, when this course is embedded, sits above
-   the viewport chrome, so the edge is the right anchor everywhere. */
+/* The ribbon hangs from the bottom edge of the portal's top bar, its top
+   flush with the bar's rule. On hover it unfurls a little further down;
+   the top never moves, so no gap opens against the rule. */
 .cn-ribbon {
   position: fixed;
-  top: -0.375rem;
+  top: var(--portal-bar-h, 0px);
   left: 1rem;
   z-index: 120;
   width: 2.5rem;
@@ -22,7 +21,7 @@
   color: var(--omo-canvas);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 0.5rem), 0 100%);
   cursor: pointer;
-  transition: transform 160ms ease;
+  transition: height 160ms ease;
 }
 
 .cn-ribbon svg {
@@ -31,7 +30,7 @@
 }
 
 .cn-ribbon:hover {
-  transform: translateY(0.375rem);
+  height: 3.625rem;
 }
 
 .cn-ribbon:focus-visible {
