@@ -252,6 +252,12 @@ grant execute on function public.mark_submission(uuid, int, int, text, text, tex
 -- once their own submission is released; verified employers, released
 -- rows on shared OMOships or their own organisation's. The view runs as
 -- its owner, so this where clause is the whole gate.
+--
+-- It must keep running as its owner (the default). Supabase's linter will
+-- suggest `security_invoker = true`; do not apply it. Signed-in users have
+-- no column privileges on the score and feedback columns of submissions
+-- (that is how early marks stay hidden), so an invoker-rights view fails
+-- with "permission denied for table submissions" for everyone.
 create view public.submission_results with (security_barrier = true) as
   select s.id, s.omoship_id, s.student_id, s.project_path, s.repo_url, s.video_url, s.status,
          s.submitted_at, s.updated_at, s.released_at,
