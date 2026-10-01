@@ -1,5 +1,17 @@
 # Changelog
 
+## 1 October 2026: dashboard and course branches joined
+
+The onboarding and dashboard work (`omoship_tile_design`) is merged into `omoship_integration`, and the two reconciled:
+
+- **One header.** `PortalBar` is the signed-in top bar everywhere: students get the round account menu, employers and admins the email and Sign out. `PortalHeader` now delegates to it, so the dashboard, onboarding, portal and course pages match.
+- **The map tile is the dashboard tile.** `/omoships` renders `OmoshipTile` for every course in the registry, with its status pill from the enrolment and submission rows. The stylised route card and its progress ring are gone from live courses; coming-soon teasers are unchanged.
+- **Profile page** at `/profile`, reached from "Profile" in the account menu. The editor now writes the onboarding columns (`subject_name`, `first_name` alongside `full_name`) and uses the shared LinkedIn normaliser, and keeps the CV upload, which onboarding does not collect. `getCurrentUser` reads `bio` again.
+- The `/portal` text corruption from the tile branch is fixed.
+- **Still outstanding:** migration 002 (onboarding columns and `complete_student_onboarding`) is not in `supabase/migrations/`; sign-in fails for every role until it has been applied. The onboarding search data holds ten sample rows each; `src/data/universities.js` and `degree-subjects.js` hold the full lists the profile page uses.
+
+---
+
 ## 1 October 2026: portal tile, top bar, profile editing and course polish
 
 ### Portal

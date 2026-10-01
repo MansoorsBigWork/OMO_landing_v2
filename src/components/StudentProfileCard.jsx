@@ -11,13 +11,13 @@ import {
   saveStudentProfile,
   uploadCv,
 } from '../lib/profile.js'
+import { normaliseLinkedIn } from '../lib/linkedin.js'
 
 /* The student's profile card: what employers will see, and the form to fill it in.
    Name, university, course and graduation year are required. Bio, LinkedIn and CV
    are optional but recommended, since verified employers browse these profiles. */
 
 const OTHER = '__other__'
-const LINKEDIN_RE = /^https:\/\/(www\.)?linkedin\.com\/.+/i
 
 const copy = {
   title: 'Your profile',
@@ -45,7 +45,7 @@ const copy = {
 const labels = {
   fullName: 'Full name',
   university: 'University',
-  course: 'Course',
+  subject: 'Course',
   graduationYear: 'Graduation year',
   bio: 'Bio',
   linkedinUrl: 'LinkedIn',
@@ -55,10 +55,9 @@ const labels = {
 const errors = {
   fullName: 'Enter your name.',
   university: 'Choose your university, or pick Other and type it in.',
-  course: 'Choose your course, or pick Other and type it in.',
+  subject: 'Choose your course, or pick Other and type it in.',
   graduationYear: 'Choose the year you graduate.',
   bio: `Keep your bio to ${BIO_MAX} characters.`,
-  linkedinUrl: 'Enter a LinkedIn profile link, like https://www.linkedin.com/in/your-name.',
   cvType: 'Your CV needs to be a PDF.',
   cvSize: 'Your CV needs to be 5 MB or smaller.',
 }
@@ -69,14 +68,14 @@ function fromDetails(user) {
   return {
     fullName: user.fullName ?? '',
     university: d.university ?? '',
-    course: d.course ?? '',
+    subject: d.subject_name ?? '',
     graduationYear: d.graduation_year ? String(d.graduation_year) : '',
     bio: d.bio ?? '',
     linkedinUrl: d.linkedin_url ?? '',
   }
 }
 
-const missingRequired = (values) => ['fullName', 'university', 'course', 'graduationYear'].filter((k) => !values[k].trim())
+const missingRequired = (values) => ['fullName', 'university', 'subject', 'graduationYear'].filter((k) => !values[k].trim())
 
 /* A select backed by a preloaded list, with Other revealing a text box */
 function ChoiceField({ label, options, value, onChange, error, placeholder }) {
@@ -166,13 +165,13 @@ function ProfileForm({ user, onSaved, onCancel }) {
   async function submit(e) {
     e.preventDefault()
     const trimmed = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, v.trim()]))
-    let linkedin = trimmed.linkedinUrl
-    if (linkedin && !/^https?:\/\//i.test(linkedin)) linkedin = `https://${linkedin}`
+    const linkedinResult = normaliseLinkedIn(trimmed.linkedinUrl)
+    const linkedin = linkedinResult.value ?? ''
 
     const found = {}
     for (const key of missingRequired(trimmed)) found[key] = errors[key]
     if (trimmed.bio.length > BIO_MAX) found.bio = errors.bio
-    if (linkedin && !LINKEDIN_RE.test(linkedin)) found.linkedinUrl = errors.linkedinUrl
+    if (linkedinResult.error) found.linkedinUrl = linkedinResult.error
     if (fieldErrors.cv) found.cv = fieldErrors.cv
     setFieldErrors(found)
     setFormError('')
@@ -193,7 +192,7 @@ function ProfileForm({ user, onSaved, onCancel }) {
         details: {
           ...user.details,
           university: trimmed.university,
-          course: trimmed.course,
+          subject_name: trimmed.subject,
           graduation_year: graduationYear,
           bio: trimmed.bio || null,
           linkedin_url: linkedin || null,
@@ -223,7 +222,7 @@ function ProfileForm({ user, onSaved, onCancel }) {
       </Field>
 
       <ChoiceField label={labels.university} options={UK_UNIVERSITIES} value={values.university} onChange={set('university')} error={fieldErrors.university} placeholder="Your university" />
-      <ChoiceField label={labels.course} options={DEGREE_SUBJECTS} value={values.course} onChange={set('course')} error={fieldErrors.course} placeholder="Your course" />
+      <ChoiceField label={labels.subject} options={DEGREE_SUBJECTS} value={values.subject} onChange={set('subject')} error={fieldErrors.subject} placeholder="Your course" />
 
       <Field label={labels.graduationYear} error={fieldErrors.graduationYear}>
         <select id={ids.year} value={values.graduationYear} onChange={set('graduationYear')} aria-invalid={fieldErrors.graduationYear ? true : undefined}>
@@ -241,7 +240,7 @@ function ProfileForm({ user, onSaved, onCancel }) {
       </Field>
 
       <Field label={labels.linkedinUrl} tag={copy.recommended} error={fieldErrors.linkedinUrl}>
-        <input id={ids.linkedin} type="url" inputMode="url" autoComplete="url" placeholder="https://www.linkedin.com/in/your-name" value={values.linkedinUrl} onChange={set('linkedinUrl')} aria-invalid={fieldErrors.linkedinUrl ? true : undefined} />
+        <input id={ids.linkedin} type="url" inputMode="url" autoComplete="url" placeholder="linkedin.com/in/your-name" value={values.linkedinUrl} onChange={set('linkedinUrl')} aria-invalid={fieldErrors.linkedinUrl ? true : undefined} />
       </Field>
 
       <div className="pf-field">
@@ -311,7 +310,7 @@ export default function StudentProfileCard({ user, onSaved }) {
   const rows = [
     ['Name', user.fullName],
     [labels.university, d.university],
-    [labels.course, d.course],
+    [labels.subject, d.subject_name],
     [labels.graduationYear, d.graduation_year],
     [labels.bio, d.bio, true],
     [labels.linkedinUrl, d.linkedin_url, true],

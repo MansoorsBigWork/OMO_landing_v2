@@ -13,6 +13,8 @@
    on the portal and inside a course, where the site's bare header rules are reverted. */
 .portal-bar{
   --portal-bar-h:56px;
+  /* the account menu's colours, so the bar reads the same outside .portal (course pages) */
+  --portal-navy:#1B2140;--portal-muted:#5F5B55;
   position:sticky;top:0;z-index:110;
   display:flex;align-items:center;justify-content:space-between;gap:24px;
   height:var(--portal-bar-h);padding:0 var(--safe);box-sizing:border-box;margin:0;
@@ -202,3 +204,9 @@ button.pm-avatar[aria-expanded="true"]{box-shadow:0 0 0 2px var(--omo-orange), v
 @media (max-width:520px){
   .portal-email{display:none;}
 }
+
+/* ---------- Profile page ---------- */
+.profile-main{max-width:calc(680px + 2 * var(--safe));}
+.profile-back{margin:0 0 18px;font-size:14px;}
+.profile-back a{color:var(--portal-muted);text-decoration:none;}
+.profile-back a:hover{color:var(--portal-navy);text-decoration:underline;text-underline-offset:.2em;}

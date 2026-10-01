@@ -1,22 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, Navigate } from 'react-router'
+import { Navigate } from 'react-router'
 import { PortalError, PortalHeader, usePortalUser } from '../components/PortalShell.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
-import { coursePath } from '../courses/index.ts'
+import { omoships } from '../courses/index.ts'
+import OmoshipTile, { courseStatus } from '../components/OmoshipTile.jsx'
 import { loadCourseSummaries } from '../courses/shared/lib/progressStore.ts'
 import { markWelcomed } from '../lib/auth.js'
 import { firstVisitGreeting, greeting } from '../lib/greeting.js'
 import '../styles/portal.css'
 import '../styles/omoships.css'
 
-const LIVE = [
-  {
-    id: 'the-last-mile',
-    slug: 'uk-delivery-network', // the course in src/courses/ this tile opens
-    title: 'The Last Mile: The UK’s Delivery Infrastructure',
-    skills: ['Path-finding algorithms', 'GitHub', 'Programming'],
-  },
-]
+/* Live OMOships come from the course registry in src/courses; each renders as an OmoshipTile */
 
 // Teasers shown blurred behind a wrench until they're announced; the images are random placeholders
 const COMING_SOON = [
@@ -33,36 +27,6 @@ const COMING_SOON = [
     image: 'https://picsum.photos/seed/omo-high-street/800/480',
   },
 ]
-
-/* A stylised delivery map: a depot, drop-off points and the shortest route between them */
-function RouteMap() {
-  return (
-    <svg className="om-map" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <rect width="400" height="240" fill="#1B2140" />
-      <g stroke="rgba(255,255,255,0.08)" strokeWidth="1">
-        {[40, 80, 120, 160, 200].map((y) => <line key={`h${y}`} x1="0" y1={y} x2="400" y2={y} />)}
-        {[50, 100, 150, 200, 250, 300, 350].map((x) => <line key={`v${x}`} x1={x} y1="0" x2={x} y2="240" />)}
-      </g>
-      <g stroke="rgba(255,255,255,0.18)" strokeWidth="6" strokeLinecap="round" fill="none">
-        <path d="M0 150 L120 150 L200 80 L400 80" />
-        <path d="M150 0 L150 240" />
-        <path d="M260 240 L260 80" />
-        <path d="M200 80 L300 190 L400 190" />
-      </g>
-      <path
-        className="om-map-route"
-        d="M60 150 L120 150 L200 80 L260 80 L260 160 L300 190 L350 190"
-        stroke="#F26419" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" strokeDasharray="10 8" fill="none"
-      />
-      {[[200, 80], [260, 160], [150, 40]].map(([cx, cy]) => (
-        <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="6" fill="#fff" />
-      ))}
-      <rect x="48" y="138" width="24" height="24" rx="5" fill="#fff" />
-      <circle cx="350" cy="190" r="11" fill="#F26419" />
-      <circle cx="350" cy="190" r="4" fill="#fff" />
-    </svg>
-  )
-}
 
 function Spanner() {
   return (
@@ -135,14 +99,6 @@ function CardBody({ title, skills, summary, media }) {
         <ProgressRing summary={summary} />
       </div>
     </>
-  )
-}
-
-function LiveCard({ slug, ...omoship }) {
-  return (
-    <Link className="om-card om-card-link" to={coursePath(slug)}>
-      <CardBody {...omoship} media={<RouteMap />} />
-    </Link>
   )
 }
 
@@ -233,10 +189,17 @@ export default function OMOships() {
         <section aria-labelledby="om-section-title">
           <div className="om-section-head">
             <h2 id="om-section-title">OMOSHIPS</h2>
-            <span className="om-count">{`${LIVE.length} live \u00B7 ${COMING_SOON.length} coming soon`}</span>
+            <span className="om-count">{`${omoships.length} live \u00B7 ${COMING_SOON.length} coming soon`}</span>
           </div>
           <div className="om-grid">
-            {LIVE.map(({ id, ...omoship }) => <LiveCard key={id} summary={summaries[omoship.slug]} {...omoship} />)}
+            {omoships.map((course) => (
+              <OmoshipTile
+                key={course.slug}
+                course={course}
+                status={courseStatus(summaries[course.slug])}
+                enrolled={Boolean(summaries[course.slug]?.enrolledAt)}
+              />
+            ))}
             {COMING_SOON.map(({ id, ...omoship }) => <ComingSoonCard key={id} {...omoship} />)}
           </div>
         </section>

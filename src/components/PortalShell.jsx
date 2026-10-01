@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router'
-import logo from '../assets/omo-logo.png'
-import ProfileMenu from './ProfileMenu.jsx'
+import { useNavigate } from 'react-router'
+import PortalBar from './PortalBar.jsx'
 import { getCurrentUser, onSignedOut, signOut } from '../lib/auth.js'
 
 /* Loads the signed-in user for pages behind the login.
@@ -36,23 +35,10 @@ export function usePortalUser() {
   return { user, loadError, handleSignOut }
 }
 
-/* `profile` swaps the email and Sign out button for the round account menu */
+/* Kept for the dashboard and onboarding pages, which load the user themselves.
+   `profile` shows the round account menu instead of the email and Sign out button. */
 export function PortalHeader({ email, name, profile, onSignOut }) {
-  return (
-    <header className="portal-header">
-      <Link to="/">
-        <img className="portal-logo" src={logo} alt="OMO" />
-      </Link>
-      {profile ? (
-        <ProfileMenu name={name} email={email} onSignOut={onSignOut} />
-      ) : (
-        <div className="portal-user">
-          <span className="portal-email ph-no-capture">{email}</span>
-          <button type="button" className="portal-signout" onClick={onSignOut}>Sign out</button>
-        </div>
-      )}
-    </header>
-  )
+  return <PortalBar user={{ email, fullName: name }} menu={Boolean(profile)} homeTo="/" onSignOut={onSignOut} />
 }
 
 export function PortalError({ message, onSignOut }) {

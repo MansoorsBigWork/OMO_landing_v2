@@ -21,16 +21,17 @@ function fail(error, fallback) {
 }
 
 /* Saves the editable fields. Empty optional values are stored as null. */
-export async function saveStudentProfile(userId, { fullName, university, course, graduationYear, bio, linkedinUrl }) {
+export async function saveStudentProfile(userId, { fullName, university, subject, graduationYear, bio, linkedinUrl }) {
   const db = client()
-  const profile = await db.from('profiles').update({ full_name: fullName }).eq('id', userId)
+  const firstName = fullName.split(/\s+/)[0]
+  const profile = await db.from('profiles').update({ full_name: fullName, first_name: firstName }).eq('id', userId)
   if (profile.error) fail(profile.error, 'Your name could not be saved.')
 
   const details = await db
     .from('student_profiles')
     .update({
       university,
-      course,
+      subject_name: subject,
       graduation_year: graduationYear,
       bio: bio || null,
       linkedin_url: linkedinUrl || null,

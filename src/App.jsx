@@ -7,6 +7,7 @@ import { COURSE_BASE } from './courses/index.ts'
 // Loaded on demand so the public pages don't download the Supabase client
 const RequireAuth = lazy(() => import('./components/RequireAuth.jsx'))
 const Portal = lazy(() => import('./pages/Portal.jsx'))
+const Profile = lazy(() => import('./pages/Profile.jsx'))
 const CourseShell = lazy(() => import('./courses/CourseShell.tsx'))
 const OMOships = lazy(() => import('./pages/OMOships.jsx'))
 const Onboarding = lazy(() => import('./pages/Onboarding.jsx'))
@@ -63,6 +64,7 @@ export default function App() {
         {/* Signed-in area: the portal and every OMOship course */}
         <Route element={<RequireAuth />}>
           <Route path="/portal" element={<Portal />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path={`${COURSE_BASE}/:slug/*`} element={<CourseShell />} />
         </Route>
         {/* The student dashboard and onboarding check sign-in themselves (with a local preview in dev) */}

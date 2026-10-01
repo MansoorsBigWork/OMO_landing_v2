@@ -26,6 +26,7 @@ npm run preview  # serves the built site locally
 - `/login`, `/signup`, `/verify`, `/forgot-password`, `/reset-password` — sign-in screens ([src/pages/auth/](src/pages/auth/)), backed by Supabase Auth via [src/lib/auth.js](src/lib/auth.js)
 - `/onboarding` — first-login questions for students ([src/pages/Onboarding.jsx](src/pages/Onboarding.jsx)); students go here until they finish it
 - `/omoships` — the student dashboard ([src/pages/OMOships.jsx](src/pages/OMOships.jsx))
+- `/profile` — a student's editable profile and CV ([src/pages/Profile.jsx](src/pages/Profile.jsx)), reached from the account menu
 - `/portal` — signed-in area for employers and admins ([src/pages/Portal.jsx](src/pages/Portal.jsx)), behind [src/components/RequireAuth.jsx](src/components/RequireAuth.jsx); students are redirected to `/omoships`
 - `/portal/omoships/<slug>/*` — an OMOship course ([src/courses/](src/courses/), see its [README](src/courses/README.md))
 

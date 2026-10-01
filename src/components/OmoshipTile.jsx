@@ -18,6 +18,14 @@ const HUB = MAP_GEO.depots.find((d) => d.slug === 'rugby')
 
 const RIDE_PATH = MAP_GEO.routes.r3 // Sheffield to the hub, the longer trunk leg
 
+/* Where the student is with a course, from its enrolment and submission rows */
+export function courseStatus(summary) {
+  if (!summary?.enrolledAt) return { key: 'new', label: 'Not started' }
+  if (summary.submission?.status === 'released') return { key: 'graded', label: 'Results out' }
+  if (summary.submission) return { key: 'submitted', label: 'Submitted' }
+  return { key: 'active', label: 'In progress' }
+}
+
 const PARCEL_DELAY_MS = 350 // the routes start drawing first
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 

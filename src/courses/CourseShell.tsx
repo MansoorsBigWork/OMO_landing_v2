@@ -12,7 +12,7 @@ import "./shared/styles/app.css";
    the pages can read them synchronously. */
 
 interface PortalContext {
-  user: { id: string; email: string };
+  user: { id: string; email: string; fullName: string; firstName: string; role: string };
   signOut: () => void;
 }
 

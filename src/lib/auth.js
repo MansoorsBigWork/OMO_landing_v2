@@ -105,7 +105,7 @@ export function onSignedOut(callback) {
 const DETAILS = {
   student: [
     'student_profiles',
-    'education_stage, university, subject_name, graduation_year, linkedin_url, cv_path, onboarding_completed_at',
+    'education_stage, university, subject_name, graduation_year, bio, linkedin_url, cv_path, onboarding_completed_at',
   ],
   employer: ['employer_profiles', 'company_name, website, job_title, is_verified'],
 }
