@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 import Simulation from "./Simulation";
 import DarkPanel, { type Phase } from "./DarkPanel";
 import Explain from "./Explain";
@@ -14,7 +14,6 @@ import { measureRun } from "./engine/search";
 import type { PlaybackApi } from "./usePlayback";
 import {
   hasCompletedTask,
-  hasSeenInterlude,
   readTaskState,
   recordTaskCompletion,
   recordTaskSlideState,
@@ -49,7 +48,6 @@ const normalise = (raw: Partial<SlideTaskState> | undefined): SlideTaskState => 
 });
 
 export default function Pathfinding() {
-  const navigate = useNavigate();
   const location = useLocation();
   const [taskState, setTaskState] = useState(() => readTaskState(course.slug, TASK));
   const [overlayGone, setOverlayGone] = useState(false);
@@ -164,14 +162,11 @@ export default function Pathfinding() {
       }
       recordTaskCompletion(course.slug, TASK);
       capture("pathfinding_completed", { totalScore });
-      if (hasSeenInterlude(course.slug)) {
-        navigate(`/portal/omoships/${course.slug}/week-1/build`);
-        return;
-      }
-      /* The blue moment: the project is next, but a quick message first */
+      /* The blue moment: the project is next, but a quick message first.
+         It plays every time the task is finished, not only the first. */
       setProjectTransition(origin ?? { x: window.innerWidth / 2, y: window.innerHeight / 2, r: 40 });
     },
-    [index, navigate, totalScore, goToSlide],
+    [index, totalScore, goToSlide],
   );
 
   const interludeToast = taskCopy.toastTemplate.replace("{score}", String(totalScore));
