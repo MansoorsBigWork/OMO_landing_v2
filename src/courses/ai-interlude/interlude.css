@@ -27,10 +27,12 @@
   display: block;
 }
 
+/* Sits to the right of the course ribbon (which hangs at left 1rem, 2.5rem
+   wide) and stops short of the Skip button at the top right */
 .interlude-toast {
   position: absolute;
-  left: 1.25rem;
-  top: 1.25rem;
+  left: 4.5rem;
+  top: 1.125rem;
   margin: 0;
   padding: 0.625rem 0.875rem;
   border-radius: 0.5rem;
@@ -38,7 +40,7 @@
   color: #F8F6F0;
   font-size: 0.875rem;
   font-weight: 600;
-  max-width: 22rem;
+  max-width: min(22rem, calc(100vw - 4.5rem - 7.5rem));
 }
 
 .interlude-text {

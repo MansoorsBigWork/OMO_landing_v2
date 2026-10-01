@@ -68,7 +68,9 @@
 }
 
 .intro-reading-inner {
-  padding: 2rem 4rem 5rem 1rem;
+  /* The top padding clears the course ribbon (3.625rem tall when hovered)
+     that hangs over the column's top-left corner */
+  padding: 4.5rem 4rem 5rem 1rem;
   min-width: 0;
 }
 
@@ -518,6 +520,10 @@
 
   .intro-reading {
     display: block;
+  }
+
+  .intro-reading-inner {
+    padding-top: 2rem;
   }
 
   .progress-rail {

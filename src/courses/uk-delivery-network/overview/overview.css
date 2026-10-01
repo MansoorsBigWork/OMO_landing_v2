@@ -476,6 +476,14 @@
   }
 }
 
+/* Narrower than the centred 64rem column: the page content starts at the
+   left edge, under the course ribbon, so it begins below the ribbon instead */
+@media (max-width: 1100px) {
+  .omoship-header {
+    padding-top: 3.5rem;
+  }
+}
+
 /* Small viewports */
 
 @media (max-width: 640px) {
