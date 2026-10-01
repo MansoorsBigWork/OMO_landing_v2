@@ -8,4 +8,5 @@ posthog.init('phc_t6anytgtknNaspu77sW9EvPYRf6a8bac4bUgcaMQ7RBf', {
     person_profiles: 'identified_only', // or 'always' to create profiles for anonymous users as well
     persistence: 'memory', // no cookies or local storage
     respect_dnt: true,
+    session_recording: { maskAllInputs: true }, // plus .ph-no-capture on names, emails and onboarding answers
 })

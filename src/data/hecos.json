@@ -1,0 +1,12 @@
+[
+  { "code": "100079", "name": "Business and management" },
+  { "code": "100105", "name": "Accounting" },
+  { "code": "100302", "name": "History" },
+  { "code": "100366", "name": "Computer science" },
+  { "code": "100403", "name": "Mathematics" },
+  { "code": "100417", "name": "Chemistry" },
+  { "code": "100425", "name": "Physics" },
+  { "code": "100450", "name": "Economics" },
+  { "code": "100485", "name": "Law" },
+  { "code": "100497", "name": "Psychology" }
+]

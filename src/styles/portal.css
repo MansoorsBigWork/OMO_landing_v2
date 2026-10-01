@@ -156,6 +156,49 @@
 
 .portal-error-action{margin-top:20px;}
 
+/* round account menu in the header */
+.pm{position:relative;}
+.pm-avatar{
+  width:42px;height:42px;border-radius:50%;
+  display:grid;place-items:center;flex:0 0 auto;
+  border:2px solid #fff;background:var(--portal-navy);color:#fff;
+  font:inherit;font-size:15px;font-weight:700;letter-spacing:.02em;
+  box-shadow:0 0 0 1px rgba(27,33,64,0.15), var(--shadow-sm);cursor:pointer;
+  transition:box-shadow .18s ease, transform .14s ease;
+}
+button.pm-avatar:hover{box-shadow:0 0 0 2px var(--omo-orange), var(--shadow-sm);}
+button.pm-avatar:focus-visible{outline:2px solid var(--omo-orange);outline-offset:3px;}
+button.pm-avatar[aria-expanded="true"]{box-shadow:0 0 0 2px var(--omo-orange), var(--shadow-sm);}
+.pm-avatar-lg{width:44px;height:44px;cursor:default;box-shadow:none;border:0;}
+.pm-menu{
+  position:absolute;top:calc(100% + 10px);right:0;z-index:60;
+  width:min(280px, calc(100vw - 32px));padding:8px;
+  background:#fff;border-radius:14px;
+  border:1px solid rgba(27,33,64,0.08);box-shadow:var(--shadow-lg);
+  animation:pm-in .14s ease-out;
+}
+@keyframes pm-in{from{opacity:0;transform:translateY(-4px);}}
+@media (prefers-reduced-motion:reduce){.pm-menu{animation:none;}}
+.pm-who{display:flex;align-items:center;gap:12px;padding:10px 10px 14px;margin-bottom:6px;border-bottom:1px solid rgba(27,33,64,0.08);}
+.pm-who > div{min-width:0;}
+.pm-name{font-weight:700;font-size:15px;color:var(--portal-navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pm-email{font-size:13px;color:var(--portal-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pm-item{
+  width:100%;display:flex;align-items:center;gap:12px;
+  padding:10px;border:0;border-radius:8px;background:none;
+  font:inherit;font-size:14px;font-weight:600;color:var(--portal-navy);text-align:left;cursor:pointer;
+}
+.pm-item:hover, .pm-item:focus-visible{background:#F6F1EB;outline:none;}
+.pm-item[aria-disabled="true"]{color:#8C877F;cursor:default;}
+.pm-soon{
+  margin-left:auto;padding:2px 8px;border-radius:999px;
+  background:#ECE5DB;color:var(--portal-muted);
+  font-size:11px;font-weight:700;letter-spacing:.04em;
+}
+.pm-divider{height:1px;margin:6px 4px;background:rgba(27,33,64,0.08);}
+.pm-item-danger{color:#C2331A;}
+.pm-item-danger:hover, .pm-item-danger:focus-visible{background:#FDECE6;}
+
 @media (max-width:520px){
   .portal-email{display:none;}
 }

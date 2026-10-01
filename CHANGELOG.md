@@ -17,6 +17,13 @@
 - **CV preview** on the overview (`overview/CvPreview.tsx`, copy in `overview/cv.ts`): "See this on your CV" opens two ready-to-paste CV entries, one for software roles and one for data roles, each with a copy button.
 
 ---
+## 1 October 2026: Student onboarding and the OMOships dashboard
+
+- **Onboarding** (`/onboarding`): students who haven't finished it are sent there after sign-in and from every signed-in page, including courses (`RequireAuth` now checks too). Seven one-question screens, saved in one call to `complete_student_onboarding`. Needs migration 002.
+- **Dashboard** (`/omoships`): where students land once onboarded. Time-of-day greeting ("Welcome to OMO, {name}" on the first visit, which sets `profiles.welcomed_at`), OMOship tiles (The Last Mile opens `/portal/omoships/uk-delivery-network`), a progress ring from the course's enrolment and submission rows (Not started, In progress, Submitted, Results out), blurred coming-soon tiles, a profile menu and a footer.
+- **Portal:** students are redirected from `/portal` to their dashboard, so the student OMOships card moved there as the tile's progress ring. Employers and admins see the portal as before.
+- **Analytics:** PostHog masks every input in session recordings; names, emails and onboarding answers are excluded from recordings, and onboarding events carry step numbers only.
+
 
 ## 25 September 2026: The Last Mile OMOship in the portal
 

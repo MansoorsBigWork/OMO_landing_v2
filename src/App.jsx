@@ -8,6 +8,8 @@ import { COURSE_BASE } from './courses/index.ts'
 const RequireAuth = lazy(() => import('./components/RequireAuth.jsx'))
 const Portal = lazy(() => import('./pages/Portal.jsx'))
 const CourseShell = lazy(() => import('./courses/CourseShell.tsx'))
+const OMOships = lazy(() => import('./pages/OMOships.jsx'))
+const Onboarding = lazy(() => import('./pages/Onboarding.jsx'))
 const Login = lazy(() => import('./pages/auth/Login.jsx'))
 const SignUp = lazy(() => import('./pages/auth/SignUp.jsx'))
 const Verify = lazy(() => import('./pages/auth/Verify.jsx'))
@@ -63,6 +65,9 @@ export default function App() {
           <Route path="/portal" element={<Portal />} />
           <Route path={`${COURSE_BASE}/:slug/*`} element={<CourseShell />} />
         </Route>
+        {/* The student dashboard and onboarding check sign-in themselves (with a local preview in dev) */}
+        <Route path="/omoships" element={<OMOships />} />
+        <Route path="/onboarding" element={<Onboarding />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
