@@ -102,7 +102,7 @@ export default function Verify() {
               <>Check <strong>{email}</strong></>
             )}
           </p>
-          {type === 'recovery' && <p className="auth-tag">Can’t see it? Check your spam or junk folder.</p>}
+          <p className="auth-tag">Can’t see it? Check your spam or junk folder. It can take a minute to arrive.</p>
           {error && <p className="auth-field-error" role="alert">{error}</p>}
           {notice && <p className="auth-notice" role="status">{notice}</p>}
         </div>
