@@ -9,6 +9,13 @@ export default function AuthLayout({ title, backTo, children }) {
     document.title = `${title} — OMO`
   }, [title])
 
+  // No rubber-band pull past the page edges (trackpads, phones); where a browser still bounces,
+  // the page behind shows the auth canvas colour rather than white
+  useEffect(() => {
+    document.documentElement.classList.add('no-overscroll', 'auth-page')
+    return () => document.documentElement.classList.remove('no-overscroll', 'auth-page')
+  }, [])
+
   return (
     <div className="auth">
       <aside className="auth-panel">

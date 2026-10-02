@@ -57,13 +57,13 @@
 /* The hub's idle pulse: one authored moment while the tile rests */
 .ot-pulse{fill:none;stroke:var(--omo-orange);stroke-width:1.5;opacity:0;transform-box:fill-box;transform-origin:center;}
 
-/* Glare sweep (react-bits GlareHover) */
+/* Shine: one bright line sweeps top-left to bottom-right on hover. It only
+   animates on the way in, so leaving resets it instantly and it never sweeps back */
 .ot-glare{
-  position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(-55deg,rgba(255,255,255,0) 58%,rgba(255,255,255,.55) 70%,rgba(255,255,255,0) 78%);
-  background-size:260% 260%;background-repeat:no-repeat;background-position:-120% -120%;
-  mix-blend-mode:soft-light;
-  transition:background-position .7s ease;
+  position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(135deg,
+    rgba(255,255,255,0) 44%,rgba(255,255,255,.75) 50%,rgba(255,255,255,0) 56%);
+  background-size:300% 300%;background-repeat:no-repeat;background-position:100% 100%;
 }
 
 .otile-status{
@@ -77,6 +77,7 @@
 .otile-status.is-active{color:#B5490F;}
 .otile-status.is-submitted{color:#2B3A80;}
 .otile-status.is-graded{color:#1F6B3A;}
+.otile-status.is-badge{background:var(--omo-orange);color:#fff;letter-spacing:.08em;text-transform:uppercase;font-weight:700;}
 
 /* Body */
 .otile-body{padding:20px 22px 22px;}
@@ -107,7 +108,7 @@
 /* Hover: pointer devices only */
 @media (hover:hover){
   .otile:hover .ot-route{stroke-dashoffset:0;opacity:.85;}
-  .otile:hover .ot-glare{background-position:120% 120%;}
+  .otile:hover .ot-glare{background-position:0 0;transition:background-position 1.8s cubic-bezier(.25,.1,.25,1);}
   .otile:hover .ot-parcel{opacity:1;}
 }
 /* Touch: the routes are simply there */
@@ -127,7 +128,7 @@
   .ot-pulse{animation:none;opacity:.5;transform:scale(1.6);}
   .ot-route,.otile:hover .ot-route{stroke-dashoffset:0;opacity:.85;transition:none;}
   .ot-parcel{opacity:1;transition:none;transform:translate(562px,706px);} /* rests at Sheffield, in map units */
-  .ot-glare,.otile:hover .ot-glare{transition:none;background-position:-120% -120%;}
+  .ot-glare,.otile:hover .ot-glare{transition:none;background-position:100% 100%;}
   .otile-cta svg,.otile:hover .otile-cta svg{transition:none;transform:none;}
 }
 

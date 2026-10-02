@@ -4,45 +4,9 @@ import { PortalError, PortalHeader, usePortalUser } from '../components/PortalSh
 import Typeahead from '../components/onboarding/Typeahead.jsx'
 import { completeOnboarding, landingPathFor } from '../lib/auth.js'
 import { normaliseLinkedIn } from '../lib/linkedin.js'
+import { DEGREE_STAGES, GOALS, SECTORS, STAGES } from '../data/student-options.js'
 import '../styles/portal.css'
 import '../styles/onboarding.css'
-
-const STAGES = [
-  ['undergraduate', 'Undergraduate'],
-  ['sixth_form_college', 'Sixth form or college (A-levels, T-levels, BTEC)'],
-  ['scottish_s5_s6', 'Scottish S5 or S6 (Highers, Advanced Highers)'],
-  ['further_education', 'Further education college'],
-  ['apprenticeship', 'Apprenticeship'],
-  ['postgraduate_taught', 'Postgraduate (Master’s)'],
-  ['phd', 'PhD'],
-  ['graduated', 'Recently graduated'],
-  ['other', 'Other'],
-]
-const DEGREE_STAGES = ['undergraduate', 'postgraduate_taught', 'phd', 'graduated']
-
-const GOALS = [
-  ['work_experience', 'Work experience'],
-  ['internship', 'Internship'],
-  ['placement_year', 'Placement year'],
-  ['spring_week', 'Spring week'],
-  ['graduate_job', 'Graduate job'],
-  ['degree_apprenticeship', 'Degree apprenticeship'],
-  ['portfolio_projects', 'Real projects for my CV'],
-  ['exploring_careers', 'Exploring which career fits me'],
-]
-
-const SECTORS = [
-  ['engineering', 'Engineering'],
-  ['tech_software', 'Tech and software'],
-  ['finance', 'Finance'],
-  ['consulting', 'Consulting'],
-  ['energy', 'Energy'],
-  ['healthcare', 'Healthcare'],
-  ['law', 'Law'],
-  ['creative_media', 'Creative and media'],
-  ['public_sector', 'Public sector'],
-  ['not_sure', 'Not sure yet'],
-]
 
 const MAX_PICKS = 3
 

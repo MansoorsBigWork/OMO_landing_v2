@@ -1,5 +1,29 @@
 # Changelog
 
+## 2 October 2026: employer dashboard (sample data)
+
+Employers now get their own OMOships page and a dashboard per OMOship instead of placeholder cards (`src/pages/employer/`, `src/styles/employer.css`). It shows **sample data**, labelled as such, built from `src/employer/sampleData.js`, and only uses what OMO actually records: the onboarding answers (name, stage, university, subject, graduation year, what they're looking for, sectors, LinkedIn, bio, CV) and the OMOship's own records (enrolment, intro quiz answers, pathfinding completion, the submission, the two scores out of 50, their feedback and release date). Everything shown is calculated in `src/employer/stats.js`.
+
+- **Your OMOships** (`/portal`): the same map tile students see, marked **Pilot**, opening the dashboard; beside it a dotted card with a plus that opens "Build your own OMOship" with a Talk to OMO email link.
+- **No tab bar on the employer home.** Company details and log out are in the round account menu, as for students (`ProfileMenu` now takes `items`; `EMPLOYER_MENU` holds Company details). Inside an OMOship the bar below the header holds its **Overview / Analytics** tabs and a "Sample data" tag, and the page ends with the OMO footer. Employer pages don't rubber-band past their ends.
+- **Overview** (`/portal/dashboard/:slug`): enrolled, submitted and graded as three orange rings; average score, universities, subjects; **in the last 30 days**: scored 80+, finishing study by next year, median days to submit; a **signed up vs finished** line chart (blue and orange running totals); what graded students are looking for (click to filter); the **ranked leaderboard** with the top 3 highlighted, filters and a CSV download. The right-hand column holds the OMOship card (map, what students do, tools), how scores are built and the score distribution; the leaderboard stays in the left column.
+- **Analytics** (`/portal/dashboard/:slug/analytics`): the signed up vs finished chart at full size (hover for any day, or view as a table) and breakdowns of everyone enrolled by where they study, subject, stage, finishing year, goals and sectors.
+- **Candidate** (`/portal/dashboard/:slug/candidates/:id`): scores and OMO's feedback for the project and the video, links to the repository, video, CV and LinkedIn (shown but not linked while it's sample data), dates and quiz result, bio and goals.
+- **Company details** (`/portal/company`), from the account menu.
+- **Employers can try their OMOship.** The OMOship card's "Try the OMOship" opens the course. Anyone who isn't a student gets a preview (`startPreview` in `progressStore.ts`, chosen by `CourseShell`): everything works, but enrolment, answers, progress and the submission stay in memory and nothing is written to Supabase, so nothing is stored or scored. A note across the top of the course says so.
+- `OmoshipTile` takes optional `to`, `ctaLabel` and `badge` props for the employer version.
+- The onboarding option lists moved to `src/data/student-options.js` so onboarding and the dashboard share the same wording.
+- From the design mockup, left out because OMO doesn't collect them: views, right to work, regions, route efficiency, STAR and sub-rubric scores, time on task, shortlisting, interview invites and the social value report.
+- **Next:** swap `useEmployerData` in `EmployerFrame.jsx` for Supabase reads, and list each employer's own OMOships rather than the pilot. Verified employers can already read released scores through `submission_results`; they'll also need read access to the matching `student_profiles` rows and the intro/pathfinding keys in `omoship_progress`.
+
+## 1 October 2026: employer sign-up
+
+- **Student / Employer switch** at the top of `/login` and `/signup` (`src/components/auth/AccountTypeToggle.jsx`). The choice is kept in the address (`?as=employer`) so it carries between the two pages. On sign-in the side must match the account: after the password is accepted, `check_sign_in_side` (migration 004) compares the role in `profiles` with the chosen side, and on a mismatch the session is signed out with "This is a student account. Switch to Student to sign in." (or the employer version). Admins may use either side.
+- **Employer sign-up** asks for company name, company website and job title, and a work email. The email must be on the website's domain or a subdomain of it (jo@uk.acme.com for acme.com), and personal mailboxes (Gmail, Outlook, iCloud…) are refused. A mismatch shows under the email field. The details go to Supabase as sign-up data with `role: employer`; accounts still start unverified.
+- **The database enforces the same rule** ([supabase/migrations/004_employer_signup.sql](supabase/migrations/004_employer_signup.sql)): a Before User Created hook returns the readable error, a trigger on `auth.users` blocks the account even if the hook is off (and stops an employer changing to an off-domain email later), and a trigger on `employer_profiles` stores the company details from the form. The front-end check lives in `validateWorkEmail` in `src/lib/validation.js`; keep the two in step.
+- **Employers skip the student quiz.** Employer sign-ups were being saved as students, so they were sent to `/onboarding`: `handle_new_user` (migration 001, not in the repo) doesn't act on `role: employer`. [supabase/migrations/005_employer_role.sql](supabase/migrations/005_employer_role.sql) corrects its rows as they're written (the `profiles` row becomes `employer`, and an `employer_profiles` row replaces the student one) and converts employer sign-ups that already came out as students, if their email passes the domain rule. The website already sends employers to `/portal`.
+- **To deploy:** run migrations 004 and 005 in SQL Editor, then Authentication → Hooks → Before User Created → Postgres → `public.hook_before_user_created`. Run it before deploying this version: sign-in calls `check_sign_in_side` and refuses everyone, students included, if the function is missing.
+
 ## 1 October 2026: dashboard and course branches joined
 
 The onboarding and dashboard work (`omoship_tile_design`) is merged into `omoship_integration`, and the two reconciled:
@@ -333,7 +357,7 @@ The site does not work fully until these are set. They live outside the code.
 1. **Session replay records personal details shown on screen**: names and emails in the portal, and the email address on the code and reset screens. Typed input is hidden, but visible text isn't. Mark these parts to be blanked in recordings.
 2. **Login tokens in email links:** if an email template ever contains a link, clicking it opens the site with login tokens in the web address, and PostHog records the full address. Keep templates code-only, or strip tokens from the address before PostHog loads.
 3. **Bot protection** (Cloudflare Turnstile) on sign-up, sign-in and reset is planned. Its domain will need adding to the security policy.
-4. **Employer sign-up behind the scenes:** `handle_new_user` still accepts `role: employer` when someone calls the Supabase API directly. Such accounts start unverified and can't see students. Change the trigger if self-service employer accounts should be impossible.
+4. **Employer sign-up** is now on the website (see the 1 October entry). Accounts start unverified and can't see students until an admin verifies them; migration 004 checks the email is on the company's domain.
 5. **Two-factor authentication:** turn it on for portal admins, and on the GitHub, Netlify, Supabase, PostHog and domain registrar accounts. The privacy policy promises it for production systems.
 6. **Account deletion** from a settings page is promised in the privacy policy but not built yet.
 7. **CV bucket:** set a file type and size limit (PDF, 5 MB).

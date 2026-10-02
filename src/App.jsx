@@ -38,6 +38,10 @@ function page(importer) {
 }
 const RequireAuth = page(() => import('./components/RequireAuth.jsx'))
 const Portal = page(() => import('./pages/Portal.jsx'))
+const EmployerOverview = page(() => import('./pages/employer/EmployerOverview.jsx'))
+const EmployerAnalytics = page(() => import('./pages/employer/EmployerAnalytics.jsx'))
+const EmployerCandidate = page(() => import('./pages/employer/EmployerCandidate.jsx'))
+const EmployerCompany = page(() => import('./pages/employer/EmployerCompany.jsx'))
 const Profile = page(() => import('./pages/Profile.jsx'))
 const CourseShell = page(() => import('./courses/CourseShell.tsx'))
 const OMOships = page(() => import('./pages/OMOships.jsx'))
@@ -95,6 +99,11 @@ export default function App() {
         {/* Signed-in area: the portal and every OMOship course */}
         <Route element={<RequireAuth />}>
           <Route path="/portal" element={<Portal />} />
+          {/* Employers: /portal lists their OMOships; each has a dashboard */}
+          <Route path="/portal/dashboard/:slug" element={<EmployerOverview />} />
+          <Route path="/portal/dashboard/:slug/analytics" element={<EmployerAnalytics />} />
+          <Route path="/portal/dashboard/:slug/candidates/:id" element={<EmployerCandidate />} />
+          <Route path="/portal/company" element={<EmployerCompany />} />
           <Route path="/profile" element={<Profile />} />
           <Route path={`${COURSE_BASE}/:slug/*`} element={<CourseShell />} />
         </Route>

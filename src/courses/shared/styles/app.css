@@ -73,6 +73,18 @@
   padding: 2rem 1.5rem;
 }
 
+/* Shown to employers opening their own OMOship: nothing they do is saved */
+.course-preview-note {
+  margin: 0;
+  padding: 0.6rem 1.5rem;
+  background: #fff1e8;
+  border-bottom: 1px solid #f6d4bf;
+  color: #b5490f;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: center;
+}
+
 /* Shown by the course shell when the progress rows could not be loaded */
 .course-error {
   max-width: 36rem;

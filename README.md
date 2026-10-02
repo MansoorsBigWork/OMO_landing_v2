@@ -32,7 +32,7 @@ npm run preview  # serves the built site locally
 
 ## Database
 
-Migration 001 (roles, profiles, the `cvs` bucket) is live and was applied by hand. [supabase/migrations/003_omoships.sql](supabase/migrations/003_omoships.sql) adds organisations, OMOships, enrolments, progress, submissions and the `submissions` bucket; paste it once into Supabase → SQL Editor before deploying a version that needs it. The schema is described in OMO's database brief (25 September 2026). Migration 002 (onboarding columns and `complete_student_onboarding`) is needed for `/onboarding` and the dashboard greeting.
+Migration 001 (roles, profiles, the `cvs` bucket) is live and was applied by hand. [supabase/migrations/003_omoships.sql](supabase/migrations/003_omoships.sql) adds organisations, OMOships, enrolments, progress, submissions and the `submissions` bucket; paste it once into Supabase → SQL Editor before deploying a version that needs it. The schema is described in OMO's database brief (25 September 2026). Migration 002 (onboarding columns and `complete_student_onboarding`) is needed for `/onboarding` and the dashboard greeting. [supabase/migrations/004_employer_signup.sql](supabase/migrations/004_employer_signup.sql) checks that employers sign up with an email on their company's domain; after running it, switch on its hook under Authentication → Hooks → Before User Created. [supabase/migrations/005_employer_role.sql](supabase/migrations/005_employer_role.sql) makes those sign-ups employer accounts rather than students.
 
 ## Onboarding reference data
 

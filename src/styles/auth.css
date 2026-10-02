@@ -1,4 +1,6 @@
 /* ---------- Auth pages: sign in, sign up, codes, password reset ---------- */
+html.no-overscroll, html.no-overscroll body{overscroll-behavior-y:none;}
+html.auth-page, html.auth-page body{background:#F6F1EB;}
 .auth{
   --auth-navy:#1B2140;
   --auth-canvas:#F6F1EB;
@@ -20,6 +22,8 @@
 
 /* brand panel */
 .auth-panel{
+  /* stays put while the form column scrolls (the employer sign-up runs past one screen) */
+  position:sticky;top:0;height:100vh;height:100dvh;
   display:flex;align-items:center;justify-content:center;
   background:linear-gradient(170deg,#3558FF 0%,#2439DA 35%,#1A2AA8 58%,#0E1664 80%,#01020A 100%);
 }
@@ -64,6 +68,27 @@
 .auth-switch{text-align:center;font-size:14px;color:var(--auth-muted);margin-top:18px;}
 .auth-switch a{color:var(--omo-orange);font-weight:700;text-decoration:none;}
 .auth-switch a:hover{text-decoration:underline;}
+
+/* Student / Employer switch: a sliding pill behind the chosen side */
+.auth-toggle{
+  position:relative;display:grid;grid-template-columns:1fr 1fr;
+  margin-bottom:28px;padding:4px;border-radius:999px;
+  background:#fff;border:1px solid var(--auth-line);
+}
+.auth-toggle::before{
+  content:'';position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);
+  border-radius:999px;background:var(--auth-navy);
+  transition:transform .25s cubic-bezier(.22,1,.36,1);
+}
+.auth-toggle[data-value="employer"]::before{transform:translateX(100%);}
+.auth-toggle button{
+  position:relative;height:38px;border:0;border-radius:999px;background:none;cursor:pointer;
+  font:inherit;font-size:14px;font-weight:700;color:var(--auth-muted);
+  transition:color .2s ease;
+}
+.auth-toggle button[aria-checked="true"]{color:#fff;}
+.auth-toggle button:focus-visible{outline:2px solid #3355FF;outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){.auth-toggle::before{transition:none;}}
 
 /* form */
 .auth-form{display:flex;flex-direction:column;gap:18px;}
@@ -154,7 +179,7 @@
 /* phones and small tablets: the brand panel becomes a band across the top */
 @media (max-width:860px){
   .auth{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
-  .auth-panel{min-height:128px;padding:28px 0;}
+  .auth-panel{position:static;height:auto;min-height:128px;padding:28px 0;}
   .auth-panel-logo{width:112px;}
   .auth-back{top:16px;left:16px;}
   .auth-content{padding-block:64px 28px;}

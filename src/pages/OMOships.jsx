@@ -108,7 +108,9 @@ function ComingSoonCard({ image, ...omoship }) {
       <div className="om-soon-blur" aria-hidden="true">
         <CardBody {...omoship} media={<img className="om-photo" src={image} alt="" />} />
       </div>
-      <Spanner />
+      <div className="om-soon-overlay">
+        <Spanner />
+      </div>
     </article>
   )
 }

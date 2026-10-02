@@ -79,6 +79,8 @@ interface Store {
   enrolledAt: number | null;
   progress: Record<string, unknown>;
   submission: Submission | null;
+  /* A preview (an employer looking round the course): kept in memory only, nothing is saved */
+  preview: boolean;
 }
 
 let store: Store | null = null;
@@ -130,7 +132,19 @@ export async function loadProgress(uid: string, slug: string): Promise<void> {
     enrolledAt: enrolment.data ? Date.parse(enrolment.data.enrolled_at) : null,
     progress: Object.fromEntries((progress.data ?? []).map((row) => [row.key, row.value])),
     submission: submission.data ? toSubmission(submission.data as SubmissionRow, result.data as ResultRow | null) : null,
+    preview: false,
   };
+}
+
+/* Opens a course for someone who isn't a student, such as an employer previewing their
+   OMOship. Everything works as for a student, but answers, enrolment and submission stay in
+   this tab and are gone when they leave: nothing touches the database. */
+export function startPreview(uid: string, slug: string): void {
+  store = { uid, slug, omoshipId: "", deadline: null, enrolledAt: null, progress: {}, submission: null, preview: true };
+}
+
+export function isPreview(slug: string): boolean {
+  return current(slug)?.preview ?? false;
 }
 
 export function clearProgress(): void {
@@ -192,6 +206,7 @@ function write(slug: string, key: string, value: unknown): void {
   const s = current(slug);
   if (!s) return;
   s.progress[key] = value;
+  if (s.preview) return;
   const { uid, omoshipId } = s;
   void enqueue(`${slug}/${key}`, async () => {
     const { error } = await client()
@@ -226,6 +241,10 @@ export async function recordEnrolment(slug: string): Promise<void> {
   const s = current(slug);
   if (!s) throw new Error("Course progress has not loaded.");
   if (s.enrolledAt != null) return;
+  if (s.preview) {
+    s.enrolledAt = Date.now();
+    return;
+  }
   const { data, error } = await client()
     .from("enrolments")
     .insert({ omoship_id: s.omoshipId, student_id: s.uid })
@@ -312,6 +331,19 @@ export function readSubmission(slug: string): Submission | null {
 export async function recordSubmission(slug: string, repoUrl: string, videoUrl: string): Promise<Submission> {
   const s = current(slug);
   if (!s) throw new Error("Course progress has not loaded.");
+  if (s.preview) {
+    const now = Date.now();
+    s.submission = {
+      repoUrl,
+      videoUrl,
+      submittedAt: now,
+      firstSubmittedAt: s.submission?.firstSubmittedAt ?? now,
+      status: "submitted",
+      score: null,
+      feedback: null,
+    };
+    return s.submission;
+  }
   const db = client();
 
   const { data, error } = s.submission

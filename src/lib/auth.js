@@ -24,8 +24,14 @@ const MESSAGES = {
   over_request_rate_limit: 'Too many attempts. Please wait a minute and try again.',
 }
 
+// The before-user-created hook's messages about a work email that doesn't match the company
+const EMPLOYER_EMAIL_HINTS = ['work email', 'match your company']
+
 function toAuthError(error) {
   if (import.meta.env.DEV) console.warn('[auth]', error.code ?? error.name, error.message)
+  if (EMPLOYER_EMAIL_HINTS.some((hint) => error.message?.includes(hint))) {
+    return new AuthError(error.message, 'employer_email')
+  }
   if (error.name === 'AuthRetryableFetchError') {
     return new AuthError('We couldn’t reach OMO. Check your connection and try again.', 'network')
   }
@@ -44,19 +50,42 @@ async function run(request) {
   return data
 }
 
-export async function signIn({ email, password }) {
+/* side is the Student / Employer switch. Once the password is accepted, the database checks the
+   account's real role against it (check_sign_in_side, migration 004); on a mismatch, or if the check
+   can't run, the new session is signed out again so nobody gets in through the wrong side. */
+export async function signIn({ email, password, side = 'student' }) {
   await run(client().auth.signInWithPassword({ email, password }))
+  await checkSignInSide(side)
 }
 
-/* No role is sent, so handle_new_user makes the account a student.
+// Also used after a sign-up code signs someone in (Verify)
+export async function checkSignInSide(side) {
+  const { error } = await client().rpc('check_sign_in_side', { side })
+  if (!error) return
+  await client().auth.signOut()
+  if (import.meta.env.DEV) console.warn('[auth] check_sign_in_side', error.code, error.message)
+  const wrongSide = error.code === '42501'
+  throw new AuthError(wrongSide ? error.message : 'We couldn’t sign you in. Please try again.', wrongSide ? 'wrong_side' : error.code)
+}
+
+/* Students send no role, so handle_new_user makes them students. Employers send role: employer with
+   their company details; the database refuses the account unless the email is on the company's domain
+   (supabase/migrations/004_employer_signup.sql). Employers start unverified until an admin checks them.
    Resolves to { needsCode }: false only if "Confirm email" is switched off in Supabase. */
-export async function signUp({ fullName, email, password }) {
-  const data = await run(
-    client().auth.signUp({ email, password, options: { data: { full_name: fullName } } }),
-  )
+export async function signUp({ fullName, email, password, employer }) {
+  const data = { full_name: fullName }
+  if (employer) {
+    Object.assign(data, {
+      role: 'employer',
+      company_name: employer.companyName,
+      website: employer.website,
+      job_title: employer.jobTitle,
+    })
+  }
+  const result = await run(client().auth.signUp({ email, password, options: { data } }))
   // Supabase reports an already-registered email as a user with no identities rather than an error
-  if (data.user && data.user.identities?.length === 0) throw new AuthError(ACCOUNT_EXISTS, 'user_already_exists')
-  return { needsCode: !data.session }
+  if (result.user && result.user.identities?.length === 0) throw new AuthError(ACCOUNT_EXISTS, 'user_already_exists')
+  return { needsCode: !result.session }
 }
 
 // type: 'signup' confirms a new account; 'recovery' signs the user in so they can set a new password

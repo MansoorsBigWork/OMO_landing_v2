@@ -49,7 +49,7 @@ html.no-overscroll, html.no-overscroll body{overscroll-behavior-y:none;}
 .om-card-link:focus-visible{outline:3px solid var(--omo-orange);outline-offset:3px;}
 
 /* picture with the skills on top */
-.om-media{position:relative;aspect-ratio:16 / 10;overflow:hidden;}
+.om-media{position:relative;aspect-ratio:5 / 4;overflow:hidden;} /* matches the live tile's map */
 .om-map, .om-photo{display:block;width:100%;height:100%;}
 .om-photo{object-fit:cover;background:#E5E5E5;}
 .om-map-route{animation:om-route 1.6s linear infinite;}
@@ -106,10 +106,13 @@ html.no-overscroll, html.no-overscroll body{overscroll-behavior-y:none;}
   filter:blur(6px);transform:scale(1.04); /* scale hides the soft blurred edge */
   pointer-events:none;user-select:none;
 }
+.om-soon-overlay{ /* sits over the picture so the wrench centres on it, not the whole card */
+  position:absolute;top:0;left:0;right:0;aspect-ratio:5 / 4;
+  display:grid;place-items:center;pointer-events:none;
+}
 .om-spanner{
-  position:absolute;top:50%;left:50%;
   width:clamp(64px,24%,92px);
-  transform:translate(-50%,-50%) scaleX(-1); /* mirrored so the jaw faces right */
+  transform:scaleX(-1); /* mirrored so the jaw faces right */
   filter:drop-shadow(0 6px 14px rgba(23,21,19,0.3));
 }
 
@@ -121,10 +124,14 @@ html.no-overscroll, html.no-overscroll body{overscroll-behavior-y:none;}
   padding:clamp(32px,4vw,52px) max(var(--safe), calc((100% - 1200px) / 2));
 }
 .om-footer .contact-footer{margin-top:0;padding-top:0;border-top:0;}
+.om-footer .contact-footer .footer-links{gap:14px clamp(36px,5vw,72px);} /* only three links here, so give them room */
 
 @media (max-width:960px){
   .om-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media (max-width:640px){
   .om-grid{grid-template-columns:minmax(0,1fr);}
+}
+@media (max-width:520px){
+  .om-media, .om-soon-overlay{aspect-ratio:4 / 3;} /* as the live tile does */
 }

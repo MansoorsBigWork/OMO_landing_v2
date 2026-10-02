@@ -1,13 +1,18 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 
-// Sections that don't have pages yet: shown so students can see what's coming, but not clickable
-const SECTIONS = [
-  { label: 'Information', icon: 'M12 11v6M12 7.5v.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z' },
-  { label: 'Achievements', icon: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3' },
-  { label: 'Results', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
-]
 const PROFILE_ICON = 'M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'
+const COMPANY_ICON = 'M3 21h18M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M15 9h2a2 2 0 0 1 2 2v10M9 7h2M9 11h2M9 15h2'
+
+/* Menu items above Log out: { label, icon, to } links, or { label, icon, soon: true } for
+   sections without pages yet (shown so people can see what's coming, but not clickable) */
+export const STUDENT_MENU = [
+  { label: 'Profile', icon: PROFILE_ICON, to: '/profile' },
+  { label: 'Information', icon: 'M12 11v6M12 7.5v.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z', soon: true },
+  { label: 'Achievements', icon: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3', soon: true },
+  { label: 'Results', icon: 'M4 20V10M10 20V4M16 20v-7M22 20H2', soon: true },
+]
+export const EMPLOYER_MENU = [{ label: 'Company details', icon: COMPANY_ICON, to: '/portal/company' }]
 const LOG_OUT_ICON = 'M15 12H3M7 8l-4 4 4 4M11 4h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-8'
 
 function Icon({ d }) {
@@ -25,7 +30,7 @@ function initialsOf(name) {
 }
 
 /* Round avatar in the header that opens the account menu (menu-button pattern: arrows, Home/End, Escape). */
-export default function ProfileMenu({ name, email, onSignOut }) {
+export default function ProfileMenu({ name, email, onSignOut, items = STUDENT_MENU }) {
   const id = useId()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
@@ -102,40 +107,33 @@ export default function ProfileMenu({ name, email, onSignOut }) {
             </div>
           </div>
 
-          <button
-            ref={(el) => (itemsRef.current[0] = el)}
-            type="button"
-            role="menuitem"
-            className="pm-item"
-            tabIndex={-1}
-            onClick={() => {
-              setOpen(false)
-              navigate('/profile')
-            }}
-          >
-            <Icon d={PROFILE_ICON} />
-            <span>Profile</span>
-          </button>
-
-          {SECTIONS.map(({ label, icon }, index) => (
+          {items.map(({ label, icon, to, soon }, index) => (
             <button
               key={label}
-              ref={(el) => (itemsRef.current[index + 1] = el)}
+              ref={(el) => (itemsRef.current[index] = el)}
               type="button"
               role="menuitem"
               className="pm-item"
-              aria-disabled="true"
+              aria-disabled={soon ? 'true' : undefined}
               tabIndex={-1}
+              onClick={
+                soon
+                  ? undefined
+                  : () => {
+                      setOpen(false)
+                      navigate(to)
+                    }
+              }
             >
               <Icon d={icon} />
               <span>{label}</span>
-              <span className="pm-soon">Soon</span>
+              {soon && <span className="pm-soon">Soon</span>}
             </button>
           ))}
 
           <div className="pm-divider" role="separator" />
           <button
-            ref={(el) => (itemsRef.current[SECTIONS.length + 1] = el)}
+            ref={(el) => (itemsRef.current[items.length] = el)}
             type="button"
             role="menuitem"
             className="pm-item pm-item-danger"
