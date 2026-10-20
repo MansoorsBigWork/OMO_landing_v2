@@ -62,8 +62,8 @@ export default function EmployerFrame({ title, omoship, back, children }) {
       <main className="ed-main">
         {!user.isVerified && (
           <p className="ed-notice" role="status">
-            <strong>Your account is pending verification.</strong> We check every employer by hand and will email you
-            once you’re approved.
+            <strong>Demo account.</strong> You’re seeing sample students. Real candidates appear here once your
+            OMOship is running with OMO.
           </p>
         )}
         {omoship && (

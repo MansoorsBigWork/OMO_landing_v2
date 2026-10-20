@@ -4,24 +4,18 @@ import AuthLayout from '../../components/auth/AuthLayout.jsx'
 import AccountTypeToggle, { useAccountType, withAccountType } from '../../components/auth/AccountTypeToggle.jsx'
 import Field from '../../components/auth/Field.jsx'
 import { landingPath, signUp } from '../../lib/auth.js'
-import {
-  validateCompanyWebsite,
-  validateEmail,
-  validateNewPassword,
-  validatePasswordMatch,
-  validateWorkEmail,
-} from '../../lib/validation.js'
+import { validateEmail, validateNewPassword, validatePasswordMatch } from '../../lib/validation.js'
 
-/* Students get a student account (the database default). Employers also give their company,
-   and their email must be on the company's website domain; the database checks this again. */
+const CONTACT = 'mailto:buildingomo@gmail.com?subject=Employer%20account'
+
+/* Students sign up here and get a student account (the database default). Employer accounts
+   are made by OMO (supabase/migrations/007_employers_by_invite.sql), so the Employer side
+   only says how to get one; the database refuses employer sign-ups made any other way. */
 export default function SignUp() {
   const navigate = useNavigate()
   const [accountType, setAccountType] = useAccountType()
   const isEmployer = accountType === 'employer'
   const [fullName, setFullName] = useState('')
-  const [companyName, setCompanyName] = useState('')
-  const [website, setWebsite] = useState('')
-  const [jobTitle, setJobTitle] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -29,24 +23,13 @@ export default function SignUp() {
   const [formError, setFormError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  function switchType(next) {
-    setAccountType(next)
-    setErrors({})
-    setFormError('')
-  }
-
   async function handleSubmit(event) {
     event.preventDefault()
     const found = {
       fullName: fullName.trim() ? '' : 'Enter your name.',
-      email: isEmployer ? validateWorkEmail(email, website) : validateEmail(email),
+      email: validateEmail(email),
       password: validateNewPassword(password),
       confirm: validatePasswordMatch(password, confirm),
-    }
-    if (isEmployer) {
-      found.companyName = companyName.trim() ? '' : 'Enter your company’s name.'
-      found.website = validateCompanyWebsite(website)
-      found.jobTitle = jobTitle.trim() ? '' : 'Enter your job title.'
     }
     setErrors(found)
     setFormError('')
@@ -54,28 +37,36 @@ export default function SignUp() {
 
     setSubmitting(true)
     try {
-      const employer = isEmployer
-        ? { companyName: companyName.trim(), website: website.trim(), jobTitle: jobTitle.trim() }
-        : undefined
-      const { needsCode } = await signUp({ fullName: fullName.trim(), email: email.trim(), password, employer })
-      if (needsCode) navigate('/verify', { state: { email: email.trim(), type: 'signup', side: accountType } })
+      const { needsCode } = await signUp({ fullName: fullName.trim(), email: email.trim(), password })
+      if (needsCode) navigate('/verify', { state: { email: email.trim(), type: 'signup' } })
       else navigate(await landingPath(), { replace: true })
     } catch (error) {
-      if (error.code === 'employer_email') setErrors((current) => ({ ...current, email: error.message }))
-      else setFormError(error.message)
+      setFormError(error.message)
       setSubmitting(false)
     }
   }
 
+  if (isEmployer) {
+    return (
+      <AuthLayout title="Employer accounts" backTo={withAccountType('/login', accountType)}>
+        <AccountTypeToggle value={accountType} onChange={setAccountType} />
+        <h1>Hiring<br />with OMO?</h1>
+        <p className="auth-sub">
+          We set up employer accounts for each company ourselves. Get in touch and we’ll send you your login.
+        </p>
+        <a className="auth-btn" href={CONTACT}>Talk to OMO</a>
+        <p className="auth-switch">
+          Already have an account? <Link to={withAccountType('/login', accountType)}>Sign in</Link>
+        </p>
+      </AuthLayout>
+    )
+  }
+
   return (
-    <AuthLayout title="Sign up" backTo={withAccountType('/login', accountType)}>
-      <AccountTypeToggle value={accountType} onChange={switchType} />
+    <AuthLayout title="Sign up" backTo="/login">
+      <AccountTypeToggle value={accountType} onChange={setAccountType} />
       <h1>Welcome<br />to OMO!</h1>
-      <p className="auth-sub">
-        {isEmployer
-          ? 'Create your company account. Sign up with your work email, on your company’s own domain.'
-          : 'Create your account to get started.'}
-      </p>
+      <p className="auth-sub">Create your account to get started.</p>
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
         {formError && <p className="auth-error" role="alert">{formError}</p>}
@@ -87,40 +78,11 @@ export default function SignUp() {
           onChange={(e) => setFullName(e.target.value)}
           error={errors.fullName}
         />
-        {isEmployer && (
-          <>
-            <Field
-              label="Company name"
-              autoComplete="organization"
-              placeholder="Acme Ltd"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              error={errors.companyName}
-            />
-            <Field
-              label="Company website"
-              type="url"
-              autoComplete="url"
-              placeholder="acme.com"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-              error={errors.website}
-            />
-            <Field
-              label="Job title"
-              autoComplete="organization-title"
-              placeholder="Head of Talent"
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
-              error={errors.jobTitle}
-            />
-          </>
-        )}
         <Field
-          label={isEmployer ? 'Work email' : 'Email'}
+          label="Email"
           type="email"
           autoComplete="email"
-          placeholder={isEmployer ? 'you@acme.com' : 'you@example.com'}
+          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
@@ -144,13 +106,11 @@ export default function SignUp() {
           error={errors.confirm}
         />
         <button className="auth-btn" type="submit" disabled={submitting}>
-          {submitting ? 'Creating account…' : isEmployer ? 'Create company account' : 'Sign up'}
+          {submitting ? 'Creating account…' : 'Sign up'}
         </button>
       </form>
 
-      <p className="auth-switch">
-        Already have an account? <Link to={withAccountType('/login', accountType)}>Sign in</Link>
-      </p>
+      <p className="auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>
     </AuthLayout>
   )
 }

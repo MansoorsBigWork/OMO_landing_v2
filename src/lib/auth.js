@@ -24,14 +24,8 @@ const MESSAGES = {
   over_request_rate_limit: 'Too many attempts. Please wait a minute and try again.',
 }
 
-// The before-user-created hook's messages about a work email that doesn't match the company
-const EMPLOYER_EMAIL_HINTS = ['work email', 'match your company']
-
 function toAuthError(error) {
   if (import.meta.env.DEV) console.warn('[auth]', error.code ?? error.name, error.message)
-  if (EMPLOYER_EMAIL_HINTS.some((hint) => error.message?.includes(hint))) {
-    return new AuthError(error.message, 'employer_email')
-  }
   if (error.name === 'AuthRetryableFetchError') {
     return new AuthError('We couldn’t reach OMO. Check your connection and try again.', 'network')
   }
@@ -68,21 +62,13 @@ export async function checkSignInSide(side) {
   throw new AuthError(wrongSide ? error.message : 'We couldn’t sign you in. Please try again.', wrongSide ? 'wrong_side' : error.code)
 }
 
-/* Students send no role, so handle_new_user makes them students. Employers send role: employer with
-   their company details; the database refuses the account unless the email is on the company's domain
-   (supabase/migrations/004_employer_signup.sql). Employers start unverified until an admin checks them.
+/* No role is sent, so handle_new_user makes the account a student. Employer accounts are made by
+   OMO (supabase/migrations/007_employers_by_invite.sql), and the database refuses employer sign-ups.
    Resolves to { needsCode }: false only if "Confirm email" is switched off in Supabase. */
-export async function signUp({ fullName, email, password, employer }) {
-  const data = { full_name: fullName }
-  if (employer) {
-    Object.assign(data, {
-      role: 'employer',
-      company_name: employer.companyName,
-      website: employer.website,
-      job_title: employer.jobTitle,
-    })
-  }
-  const result = await run(client().auth.signUp({ email, password, options: { data } }))
+export async function signUp({ fullName, email, password }) {
+  const result = await run(
+    client().auth.signUp({ email, password, options: { data: { full_name: fullName } } }),
+  )
   // Supabase reports an already-registered email as a user with no identities rather than an error
   if (result.user && result.user.identities?.length === 0) throw new AuthError(ACCOUNT_EXISTS, 'user_already_exists')
   return { needsCode: !result.session }
