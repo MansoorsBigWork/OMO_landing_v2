@@ -2,7 +2,8 @@
 
 ## 20 October 2026: OMO makes employer accounts
 
-- **No more employer sign-up.** The Employer side of `/signup` now says OMO sets up employer accounts, with a Talk to OMO email link; the Employer side of `/login` is unchanged. The database refuses any sign-up carrying `role: employer`, from the website or the API ([supabase/migrations/007_employers_by_invite.sql](supabase/migrations/007_employers_by_invite.sql)).
+- **One sign-in for everyone, in the student wording.** The Student / Employer switch is gone from `/login` and `/signup` (and `AccountTypeToggle.jsx` with it); both pages, and `/verify`, are back to how they were before employer sign-up. The account's role decides where sign-in lands: students on their dashboard, employer logins on the demo dashboard at `/portal`. `check_sign_in_side` (migration 004) is no longer called.
+- **No more employer sign-up.** `/signup` makes students only. The database refuses any sign-up carrying `role: employer`, from the website or the API ([supabase/migrations/007_employers_by_invite.sql](supabase/migrations/007_employers_by_invite.sql)).
 - **Making an employer login:** Authentication → Users → Add user (Auto Confirm), then in SQL Editor `select public.make_employer(email, full name, company, website, job title);`. Accounts made this way stay unverified, so they see the sample dashboard and never real students; the employer pages call them a demo account.
 - Migration 006 (shared domain endings like `ac.uk` refused, and an email to OMO on employer sign-up) was run but is superseded: 007 removes the sign-up email trigger, and the Edge Function was never finished, so it's gone from the repo. The domain rule still applies when an employer changes their email.
 - **To deploy:** run migration 007, then in the Supabase dashboard delete the `notify-employer-signup` Edge Function and the `NOTIFY_SECRET` secret.

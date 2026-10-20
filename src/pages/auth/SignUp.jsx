@@ -1,20 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import AuthLayout from '../../components/auth/AuthLayout.jsx'
-import AccountTypeToggle, { useAccountType, withAccountType } from '../../components/auth/AccountTypeToggle.jsx'
 import Field from '../../components/auth/Field.jsx'
 import { landingPath, signUp } from '../../lib/auth.js'
 import { validateEmail, validateNewPassword, validatePasswordMatch } from '../../lib/validation.js'
 
-const CONTACT = 'mailto:buildingomo@gmail.com?subject=Employer%20account'
-
-/* Students sign up here and get a student account (the database default). Employer accounts
-   are made by OMO (supabase/migrations/007_employers_by_invite.sql), so the Employer side
-   only says how to get one; the database refuses employer sign-ups made any other way. */
+/* Everyone who signs up here gets a student account (the database default). */
 export default function SignUp() {
   const navigate = useNavigate()
-  const [accountType, setAccountType] = useAccountType()
-  const isEmployer = accountType === 'employer'
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -46,25 +39,8 @@ export default function SignUp() {
     }
   }
 
-  if (isEmployer) {
-    return (
-      <AuthLayout title="Employer accounts" backTo={withAccountType('/login', accountType)}>
-        <AccountTypeToggle value={accountType} onChange={setAccountType} />
-        <h1>Hiring<br />with OMO?</h1>
-        <p className="auth-sub">
-          We set up employer accounts for each company ourselves. Get in touch and we’ll send you your login.
-        </p>
-        <a className="auth-btn" href={CONTACT}>Talk to OMO</a>
-        <p className="auth-switch">
-          Already have an account? <Link to={withAccountType('/login', accountType)}>Sign in</Link>
-        </p>
-      </AuthLayout>
-    )
-  }
-
   return (
     <AuthLayout title="Sign up" backTo="/login">
-      <AccountTypeToggle value={accountType} onChange={setAccountType} />
       <h1>Welcome<br />to OMO!</h1>
       <p className="auth-sub">Create your account to get started.</p>
 

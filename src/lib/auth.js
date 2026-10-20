@@ -44,22 +44,10 @@ async function run(request) {
   return data
 }
 
-/* side is the Student / Employer switch. Once the password is accepted, the database checks the
-   account's real role against it (check_sign_in_side, migration 004); on a mismatch, or if the check
-   can't run, the new session is signed out again so nobody gets in through the wrong side. */
-export async function signIn({ email, password, side = 'student' }) {
+/* One sign-in for everyone: the account's role decides where landingPath sends them
+   (students to their dashboard, the employer logins OMO makes to the demo dashboard). */
+export async function signIn({ email, password }) {
   await run(client().auth.signInWithPassword({ email, password }))
-  await checkSignInSide(side)
-}
-
-// Also used after a sign-up code signs someone in (Verify)
-export async function checkSignInSide(side) {
-  const { error } = await client().rpc('check_sign_in_side', { side })
-  if (!error) return
-  await client().auth.signOut()
-  if (import.meta.env.DEV) console.warn('[auth] check_sign_in_side', error.code, error.message)
-  const wrongSide = error.code === '42501'
-  throw new AuthError(wrongSide ? error.message : 'We couldn’t sign you in. Please try again.', wrongSide ? 'wrong_side' : error.code)
 }
 
 /* No role is sent, so handle_new_user makes the account a student. Employer accounts are made by

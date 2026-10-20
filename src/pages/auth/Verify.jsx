@@ -3,7 +3,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router'
 import AuthLayout from '../../components/auth/AuthLayout.jsx'
 import CodeInput from '../../components/auth/CodeInput.jsx'
 import SuccessState from '../../components/auth/SuccessState.jsx'
-import { checkSignInSide, landingPath, resendCode, verifyCode } from '../../lib/auth.js'
+import { landingPath, resendCode, verifyCode } from '../../lib/auth.js'
 
 const CODE_LENGTH = 6
 const RESEND_SECONDS = 60 // Supabase allows one email per address about every 60 seconds
@@ -13,14 +13,12 @@ const STEPS = {
   recovery: { heading: 'Enter the reset code we sent to your email', back: '/forgot-password' },
 }
 
-/* Code screen for both sign-up confirmation and password reset. Expects { email, type } in router state,
-   plus side (student or employer) for sign-up, which is checked against the account like a sign-in. */
+/* Code screen for both sign-up confirmation and password reset. Expects { email, type } in router state. */
 export default function Verify() {
   const navigate = useNavigate()
   const { state } = useLocation()
   const email = state?.email
   const type = state?.type === 'recovery' ? 'recovery' : 'signup'
-  const side = state?.side === 'employer' ? 'employer' : 'student'
   const step = STEPS[type]
 
   const [code, setCode] = useState('')
@@ -49,10 +47,7 @@ export default function Verify() {
     try {
       await verifyCode({ email, code, type })
       if (type === 'recovery') navigate('/reset-password', { replace: true, state: { email } })
-      else {
-        await checkSignInSide(side)
-        setRedirectTo(await landingPath())
-      }
+      else setRedirectTo(await landingPath())
     } catch (err) {
       setError(err.message)
       setSubmitting(false)
